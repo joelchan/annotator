@@ -51,7 +51,7 @@ if (Documents.find().count() == 0) {
   });
 
   // index for hopefully faster performance!
-  Documents.createIndex({content: "text"});
+  // Documents.createIndex({content: "text"});
   // Sentences._ensureIndex({docID: 1});
   // Words._ensureIndex({sentenceID: 1});
 

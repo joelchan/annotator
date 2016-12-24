@@ -221,13 +221,60 @@ Template.SearchBar.events({
     'click .search-apply-btn' : function(){
         var query = $('#search-query').val(); // grab query from text form
         Session.set("searchQuery", query);
+        var lastQuery = Session.get("lastQuery");
         if (!Session.equals("lastQuery", query)) {
             implicitRejections();
         }
         // DocSearch.search(query);
         $('.search-apply-btn').addClass('btn-success');
         Session.set("isLoading", true);
-        var queryMatchData = getMatches();
+        // var queryMatchData = getMatches();
+        $('.doc-match').unhighlight();
+        if (query != lastQuery) {
+          Meteor.call('lemmaSearch', query,
+              function(error, allMatches) {
+                  var nonIdentityMatches = [];
+                  allMatches.forEach(function(m) {
+                      if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
+                          nonIdentityMatches.push(m);
+                      }
+                  });
+                  // shuffle and note the rank in the search list
+                  nonIdentityMatches = shuffle(nonIdentityMatches);
+                  var ranks = {}
+                  var rank = 1;
+                  nonIdentityMatches.forEach(function(match) {
+                      ranks[match._id] = rank;
+                      rank += 1;
+                  })
+                  $('.doc-match').highlight(query.split(" "));
+                  var data = {'matches': nonIdentityMatches, 'ranks': ranks}
+                  Session.set("isLoading", false);
+                  Session.set("lastMatchSet", data);
+                  Session.set("matchingDocs", nonIdentityMatches);
+                  if (!Session.equals("lastQuery", query) && query != dummyQuery) {
+                      EventLogger.logNewSearch(query)
+                      SearchManager.newSearch(query, data);
+                  }
+            });
+          } else {
+            var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
+            // logger.trace("original search: " + JSON.stringify(originalSearch));
+            var lastMatchSet = originalSearch.matches.matches;
+            var newMatchSet = [];
+            var ranks = {};
+            var rank = 1;
+            lastMatchSet.forEach(function(m) {
+                if (!(isPossibleMatch(m) || isBestMatch(m))) {
+                    newMatchSet.push(m);
+                    ranks[m._id] = rank;
+                    rank += 1;
+                }
+            });
+            $('.doc-match').highlight(currentQuery.split(" "));
+            Session.set("isLoading", false);
+            Session.set("lastMatchSet", newMatchSet);
+          }
         // logger.trace(JSON.stringify(queryMatches));
         // Session.set("lastMatchSet", queryMatchData);
         // EventLogger.logNewSearch(query)
@@ -252,6 +299,7 @@ Template.SearchBar.events({
         $('#search-query').val("");
         $('.doc-match').unhighlight();
         Session.set("isLoading", false);
+        Session.set("matchingDocs", []);
     },
 
     '.click .search-help' : function() {
@@ -268,26 +316,30 @@ Template.SearchResults.rendered = function () {
 
 Template.SearchResults.helpers({
     matchingDocs: function() {
-        var query = Session.get("searchQuery");
-        var queryMatchData = getMatches();
-        Session.set("lastMatchSet", queryMatchData);
-        // var lastMatchSet = Session.get("lastMatchSet");
-        // logger.trace(JSON.stringify(queryMatches));
-        // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
-        if (!Session.equals("lastQuery", query) && query != dummyQuery) {
-            EventLogger.logNewSearch(query)
-            SearchManager.newSearch(query, queryMatchData);
-            // EventLogger.logUpdateSearch(query);
-        // } else {
-
-        }
+        // var query = Session.get("searchQuery");
+        // var queryMatchData = getMatches();
+        // Session.set("lastMatchSet", queryMatchData);
+        // // var lastMatchSet = Session.get("lastMatchSet");
+        // // logger.trace(JSON.stringify(queryMatches));
+        // // if (!sameMatches(queryMatchData.matches, lastMatchSet.matches)) {
+        // if (!Session.equals("lastQuery", query) && query != dummyQuery) {
+        //     EventLogger.logNewSearch(query)
+        //     SearchManager.newSearch(query, queryMatchData);
+        //     // EventLogger.logUpdateSearch(query);
+        // // } else {
+        //
         // }
-        Session.set("lastQuery", query);
-
-        return queryMatchData.matches;
+        // // }
+        // Session.set("lastQuery", query);
+        //
+        // return queryMatchData.matches;
+        // return Session.get("lastMatchSet").matches;
+        return Session.get("matchingDocs");
     },
     hasMatches: function() {
-        var resultLength = getMatches().matches.length;
+        // var resultLength = getMatches().matches.length;
+        var resultLength = Session.get("matchingDocs").length;
+        // var resultLength = Session.get("lastMatchSet").matches.length;
         // resultLength = DocSearch.getData({
         //       transform: function(matchText, regExp) {
         //         return matchText.replace(regExp, "<b>$&</b>")
@@ -301,7 +353,9 @@ Template.SearchResults.helpers({
         }
     },
     numMatches: function() {
-        return getMatches().matches.length;
+        // return getMatches().matches.length;
+        return Session.get("matchingDocs").length;
+        // return Session.get("lastMatchSet").matches.length;
         // return DocSearch.getData({
         //       transform: function(matchText, regExp) {
         //         return matchText.replace(regExp, "<b>$&</b>")
@@ -315,12 +369,18 @@ Template.SearchResults.helpers({
     }
 });
 
+Template.Selections.rendered = function() {
+  MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+}
+
 Template.Selections.helpers({
     bestMatches: function() {
-        return getBest();
+        // return getBest();
+        return Session.get("bestMatches");
     },
     possibleMatches: function() {
-        return getPossible();
+        // return getPossible();
+        return Session.get("possibleMatches");
         // var user = Session.get("currentUser");
         // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
         // var matchingDocs = []
@@ -330,7 +390,8 @@ Template.Selections.helpers({
         // return Documents.find({_id: {$in: matchingDocs}});
     },
     numPossible: function() {
-        return getPossible().count();
+        return Session.get("possibleMatches").length;
+        // return getPossible().count();
     },
 });
 
@@ -416,6 +477,7 @@ Template.Document.events({
         logger.debug("Clicked match button");
         var thisDoc = this;
         MatchManager.possibleMatch(Session.get("currentDoc"), thisDoc);
+        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
         // var matchData = Session.get("lastMatchSet");
         // logger.trace("Last match set: " + JSON.stringify(matchData));
         // var allMatches = matchData.matches;
@@ -434,23 +496,26 @@ Template.Document.events({
         logger.debug("Clicked match remove button");
         logger.trace(this);
         MatchManager.notMatch(Session.get("currentDoc"), this);
+        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
         // EventLogger.logRejectPreviousSelection(this);
     },
     'click .match-best': function() {
         logger.debug("Clicked best match button");
         logger.trace(this);
         // selectedDoc = this;
-        if (getBest().fetch().length > 0) {
+        var bestMatches = Session.get("bestMatches");
+        if (bestMatches.length > 0) {
             var confirmMsg = "You can only have one best match at any given moment. If you continue, you will replace the current best match and relegate it to a possible match.";
             if (confirm(confirmMsg)) {
                 // relegate current best match
-                MatchManager.possibleMatch(Session.get("currentDoc"), getBest().fetch()[0]);
+                MatchManager.possibleMatch(Session.get("currentDoc"), bestMatches.fetch()[0]);
                 // create new best
                 MatchManager.bestMatch(Session.get("currentDoc"), this);
             }
         } else {
             MatchManager.bestMatch(Session.get("currentDoc"), this);
         }
+        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
     }
 })
 
@@ -570,82 +635,82 @@ var lemmaSearch = function(query) {
   return Documents.find({allwords: {$in: expanded}}).fetch();
 }
 
-var getMatches = function() {
-    currentQuery = Session.get("searchQuery");
-    lastQuery = Session.get("lastQuery");
-    $('.doc-match').unhighlight();
-    if (currentQuery != lastQuery) {
-        // var allMatches = DocSearch.getData({
-        //       transform: function(matchText, regExp) {
-        //         // return matchText.replace(regExp, "<b>$&</b>")
-        //         return matchText;
-        //       },
-        //       sort: {isoScore: -1}
-        //     });
-        var allMatches = lemmaSearch(currentQuery);
-        var nonIdentityMatches = [];
-        allMatches.forEach(function(m) {
-            if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
-                nonIdentityMatches.push(m);
-
-            }
-        });
-        // shuffle and note the rank in the search list
-        nonIdentityMatches = shuffle(nonIdentityMatches);
-        var ranks = {}
-        var rank = 1;
-        nonIdentityMatches.forEach(function(match) {
-            ranks[match._id] = rank;
-            rank += 1;
-        })
-        $('.doc-match').highlight(currentQuery.split(" "));
-        var data = {'matches': nonIdentityMatches, 'ranks': ranks}
-        Session.set("isLoading", false);
-        return data;
-    } else {
-        var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
-        // logger.trace("original search: " + JSON.stringify(originalSearch));
-        var lastMatchSet = originalSearch.matches.matches;
-        var newMatchSet = [];
-        var ranks = {};
-        var rank = 1;
-        lastMatchSet.forEach(function(m) {
-            if (!(isPossibleMatch(m) || isBestMatch(m))) {
-                newMatchSet.push(m);
-                ranks[m._id] = rank;
-                rank += 1;
-            }
-        });
-        $('.doc-match').highlight(currentQuery.split(" "));
-        Session.set("isLoading", false);
-        return {'matches': newMatchSet, 'ranks': ranks};
-    }
-
-}
-
-var getPossible = function() {
-    var user = Session.get("currentUser");
-    var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
-    var matchingDocs = []
-    docMatches.forEach(function(m) {
-        if (!m.bestMatch) {
-            matchingDocs.push(m.matchDocID);
-        }
-    });
-    return Documents.find({_id: {$in: matchingDocs}});
-}
-
-var getBest = function() {
-    var user = Session.get("currentUser");
-    var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
-    var matchingDocs = []
-    docMatches.forEach(function(m) {
-        if (m.bestMatch) {
-            matchingDocs.push(m.matchDocID);
-        }
-    });
-    return Documents.find({_id: {$in: matchingDocs}});
-}
+// var getMatches = function() {
+//     currentQuery = Session.get("searchQuery");
+//     lastQuery = Session.get("lastQuery");
+//     $('.doc-match').unhighlight();
+//     if (currentQuery != lastQuery) {
+//         // var allMatches = DocSearch.getData({
+//         //       transform: function(matchText, regExp) {
+//         //         // return matchText.replace(regExp, "<b>$&</b>")
+//         //         return matchText;
+//         //       },
+//         //       sort: {isoScore: -1}
+//         //     });
+//         var allMatches = lemmaSearch(currentQuery);
+//         var nonIdentityMatches = [];
+//         allMatches.forEach(function(m) {
+//             if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
+//                 nonIdentityMatches.push(m);
+//
+//             }
+//         });
+//         // shuffle and note the rank in the search list
+//         nonIdentityMatches = shuffle(nonIdentityMatches);
+//         var ranks = {}
+//         var rank = 1;
+//         nonIdentityMatches.forEach(function(match) {
+//             ranks[match._id] = rank;
+//             rank += 1;
+//         })
+//         $('.doc-match').highlight(currentQuery.split(" "));
+//         var data = {'matches': nonIdentityMatches, 'ranks': ranks}
+//         Session.set("isLoading", false);
+//         return data;
+//     } else {
+//         var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
+//         // logger.trace("original search: " + JSON.stringify(originalSearch));
+//         var lastMatchSet = originalSearch.matches.matches;
+//         var newMatchSet = [];
+//         var ranks = {};
+//         var rank = 1;
+//         lastMatchSet.forEach(function(m) {
+//             if (!(isPossibleMatch(m) || isBestMatch(m))) {
+//                 newMatchSet.push(m);
+//                 ranks[m._id] = rank;
+//                 rank += 1;
+//             }
+//         });
+//         $('.doc-match').highlight(currentQuery.split(" "));
+//         Session.set("isLoading", false);
+//         return {'matches': newMatchSet, 'ranks': ranks};
+//     }
+//
+// }
+//
+// var getPossible = function() {
+//     var user = Session.get("currentUser");
+//     var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+//     var matchingDocs = []
+//     docMatches.forEach(function(m) {
+//         if (!m.bestMatch) {
+//             matchingDocs.push(m.matchDocID);
+//         }
+//     });
+//     return Documents.find({_id: {$in: matchingDocs}});
+// }
+//
+// var getBest = function() {
+//     var user = Session.get("currentUser");
+//     var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+//     var matchingDocs = []
+//     docMatches.forEach(function(m) {
+//         if (m.bestMatch) {
+//             matchingDocs.push(m.matchDocID);
+//         }
+//     });
+//     return Documents.find({_id: {$in: matchingDocs}});
+// }
 
 var isPossibleMatch = function(doc) {
     var user = Session.get("currentUser");
