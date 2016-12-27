@@ -27,7 +27,12 @@
     <button class="btn btn-danger change-seed disabled" style="margin-bottom:10px;">No good matches. Give me a new document.</button>
     <div id="seed-doc" class="col-md-12 col-xs-12 doc">
         <h4>{{title}}</h4>
-        <p class="seed-clickable">{{content}}</p>
+        <!-- <p class="seed-clickable">{{content}}</p> -->
+        <ul class="seed-clickable">
+          {{#each sentences}}
+            <li>{{this}}</li>
+          {{/each}}
+        </ul>
         <!-- {{#each sentences}} -->
             <!-- {{> sentence}} -->
         <!-- {{/each}} -->
@@ -126,7 +131,12 @@
             </div>
             <div class="doc-content">
                 <h4>{{theTitle}}</h4>
-                <p class="match-clickable">{{theContent}}</p>
+                <!-- <p class="match-clickable">{{theContent}}</p> -->
+                <ul class="match-clickable">
+                  {{#each sentences}}
+                    <li>{{this}}</li>
+                  {{/each}}
+                </ul>
             </div>
             <!-- {{#each sentences}} -->
                 <!-- {{> sentence}} -->

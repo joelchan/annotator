@@ -51,16 +51,16 @@ if (Documents.find().count() == 0) {
   });
 
   // index for hopefully faster performance!
-  // Documents.createIndex({content: "text"});
+  Documents._ensureIndex({allwords: "text"});
   // Sentences._ensureIndex({docID: 1});
   // Words._ensureIndex({sentenceID: 1});
 
 }
 
-quirkyDocs.forEach(function(doc) {
-  console.log(doc.title);
-  DocumentManager.updateDocument(doc);
-})
+// quirkyDocs.forEach(function(doc) {
+  // console.log(doc.title);
+  // DocumentManager.updateDocument(doc);
+// })
 
 SearchSource.defineSource('documents', function(searchText, options) {
   var options = {sort: {isoScore: -1}, limit: 50};

@@ -82,6 +82,10 @@
 .selections-container {
     display: block;
 }
+
+.match-clickable, .seed-clickable {
+    padding-left: 15px;
+}
 /*.result .doc, .selections-container .doc {
     max-height: 350px;
     overflow: auto;

@@ -118,21 +118,24 @@ Template.AnalogySearcher.onRendered(function() {
 
 Template.SeedDocument.helpers({
     title: function() {
-      var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content.replace("I want to make a ", "");
-      var title = allContent.split(".")[0];
-      title = title.charAt(0).toUpperCase() + title.slice(1);
-      return title;
+      // var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content.replace("I want to make a ", "");
+      // var title = allContent.split(".")[0];
+      // title = title.charAt(0).toUpperCase() + title.slice(1);
+      // return title;
+      return Session.get("currentDoc").fileName;
     },
     content: function() {
-        var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content;
-        trimmedContent = allContent.split(".").slice(1).join(". ");
-        return trimmedContent;
+        // var allContent = Documents.findOne({_id: Session.get("currentDoc")._id}).content;
+        // trimmedContent = allContent.split(".").slice(1).join(". ");
+        // return trimmedContent;
+        return Session.get("currentDoc").content;
     },
-    // sentences: function() {
-    //     logger.debug("Getting sentences...");
-    //     return Sentences.find({docID: Session.get("currentDoc")._id},
-    //                             {sort: {psn: 1}});
-    // }
+    sentences: function() {
+        // logger.debug("Getting sentences...");
+        // return Sentences.find({docID: Session.get("currentDoc")._id},
+        //                         {sort: {psn: 1}});
+        return Session.get("currentDoc").sentences;
+    },
     searches: function() {
         var allSearches = Searches.find({userID: Session.get("currentUser")._id, seedDocID: Session.get("currentDoc")._id},
             {sort: {time: -1}}).fetch();
@@ -239,8 +242,15 @@ Template.SearchBar.events({
         // var queryMatchData = getMatches();
         $('.doc-match').unhighlight();
         if (query != lastQuery) {
+          d = new Date().getTime();
+          logger.debug("Starting search...");
           Meteor.call('lemmaSearch', query,
               function(error, allMatches) {
+                  var previous = d;
+                  var d = new Date().getTime();
+                  var duration = d-previous;
+                  logger.debug("Completed in " + duration/1000 + " seconds");
+                  logger.debug("Pruning the results...");
                   var nonIdentityMatches = [];
                   allMatches.forEach(function(m) {
                       if ((m._id != Session.get("currentDoc")._id) && !(isPossibleMatch(m) || isBestMatch(m))) {
@@ -248,13 +258,28 @@ Template.SearchBar.events({
                       }
                   });
                   // shuffle and note the rank in the search list
+                  var previous = d;
+                  var d = new Date().getTime();
+                  var duration = d-previous;
+                  logger.debug("Completed in " + duration/1000 + " seconds");
+                  logger.debug("Shuffling the results...");
                   nonIdentityMatches = shuffle(nonIdentityMatches);
+                  var previous = d;
+                  var d = new Date().getTime();
+                  var duration = d-previous;
+                  logger.debug("Completed in " + duration/1000 + " seconds");
+                  logger.debug("Noting the ranks of the results...");
                   var ranks = {}
                   var rank = 1;
                   nonIdentityMatches.forEach(function(match) {
                       ranks[match._id] = rank;
                       rank += 1;
                   })
+                  var previous = d;
+                  var d = new Date().getTime();
+                  var duration = d-previous;
+                  logger.debug("Completed in " + duration/1000 + " seconds");
+                  logger.debug("Setting session data...");
                   $('.doc-match').highlight(query.split(" "));
                   var data = {'matches': nonIdentityMatches, 'ranks': ranks}
                   Session.set("isLoading", false);
@@ -264,6 +289,10 @@ Template.SearchBar.events({
                       EventLogger.logNewSearch(query)
                       SearchManager.newSearch(query, data);
                   }
+                  var previous = d;
+                  var d = new Date().getTime();
+                  var duration = d-previous;
+                  logger.debug("Completed in " + duration/1000 + " seconds");
             });
           } else {
             var originalSearch = Searches.findOne({query: currentQuery, seedDocID: Session.get("currentDoc")._id, userID: Session.get("currentUser")._id});
@@ -342,7 +371,8 @@ Template.SearchResults.helpers({
         //
         // return queryMatchData.matches;
         // return Session.get("lastMatchSet").matches;
-        return Session.get("matchingDocs");
+        // return Session.get("matchingDocs");
+        return [];
     },
     hasMatches: function() {
         // var resultLength = getMatches().matches.length;
@@ -464,13 +494,15 @@ Template.Document.helpers({
     //     return Sentences.find({docID: this._id}, {sort: {psn: 1}});
     // },
     theTitle: function() {
-      var title = this.content.split(".")[0].replace("I want to make a ", "");
-      title = title.charAt(0).toUpperCase() + title.slice(1)
-      return title;
+      // var title = this.content.split(".")[0].replace("I want to make a ", "");
+      // title = title.charAt(0).toUpperCase() + title.slice(1)
+      // return title;
+      return this.fileName;
     },
     theContent: function() {
-      trimmedContent = this.content.split(".").slice(1).join(". ");
-      return trimmedContent;
+      // trimmedContent = this.content.split(".").slice(1).join(". ");
+      // return trimmedContent;
+      return this.content;
     },
     isPossibleMatch: function() {
         return isPossibleMatch(this);
