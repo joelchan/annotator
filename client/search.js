@@ -107,10 +107,10 @@ Template.AnalogySearcher.onRendered(function() {
     });
 
     walkthrough.init();
-    // walkthrough.start();
-    // if (walkthrough.ended()) {
-        // walkthrough.restart();
-    // }
+    walkthrough.start();
+    if (walkthrough.ended()) {
+        walkthrough.restart();
+    }
     Session.set("lastMatchSet", {'matches': [], 'ranks':[]});
     Session.set("lastQuery", "");
     Session.set("searchQuery", "");
