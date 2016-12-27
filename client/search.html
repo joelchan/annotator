@@ -181,6 +181,9 @@
                 This is an example of search result that is not currently a match for the seed document.
             </div>
         </div>
+        {{#if hasMoreMatches}}
+          <button class="btn btn-primary load-more">Load {{remaining}} more results</button>
+        {{/if}}
     </div>
 </template>
 
