@@ -55,5 +55,25 @@ Meteor.methods({
           }
       });
       return Documents.find({_id: {$in: matchingDocs}}).fetch();
+  },
+  getNewDoc: function(user, currentDoc) {
+    var documents;
+    if (currentDoc) {
+        documents = Documents.find({annotatedBy: {$ne: user._id},
+                                    // fileName: {$in: toSample},
+                                    _id: {$ne: currentDoc._id}}).fetch();
+        if (documents.length < 1) {
+            documents = Documents.find({annotatedBy: {$ne: user._id},
+                                        _id: {$ne: currentDoc._id}}).fetch();
+        }
+    } else {
+        documents = Documents.find({annotatedBy: {$ne: user._id}}).fetch();
+                                    // fileName: {$in: toSample}}).fetch();
+        if (documents.length < 1) {
+            documents = Documents.find({annotatedBy: {$ne: user._id}}).fetch();
+        }
+    }
+    logger.debug(documents.length + " remaining possible documents to sample from");
+    return getRandomElement(documents);
   }
 })

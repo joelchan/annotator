@@ -192,20 +192,28 @@ Template.SeedDocument.events({
         if (confirm(confirmMsg)) {
             // TODO: log snapshot of current working space
             // Clear best match
-            getBest().forEach(function(bMatch) {
+            // getBest().forEach(function(bMatch) {
+            Session.get("bestMatches").forEach(function(bMatch) {
                 MatchManager.notMatch(currentDoc, bMatch)
             })
             // Clear possible matches
-            getPossible().forEach(function(pMatch) {
+            // getPossible().forEach(function(pMatch) {
+            Session.get("possibleMatches").forEach(function(pMatch) {
                 MatchManager.notMatch(currentDoc, pMatch)
             })
             // Clear query
             $('.search-remove-btn').click();
             // Get a new doc
-            var newDoc = DocumentManager.sampleDocument()
-            logger.trace("Sampled new document: " + JSON.stringify(newDoc));
-            EventLogger.logNewSeed(currentDoc, newDoc);
-            Session.set("currentDoc", newDoc);
+            // var newDoc = DocumentManager.sampleDocument()
+            var user = Session.get("currentUser");
+            Meteor.call("getNewDoc", user, currentDoc, function(err, newDoc) {
+              logger.trace("Sampled new document: " + JSON.stringify(newDoc));
+              EventLogger.logNewSeed(currentDoc, newDoc);
+              Session.set("currentDoc", newDoc);
+              logger.debug("Refreshing page with new doc");
+              Router.go("Search", {userID: user._id,
+                                      docID: newDoc._id});
+            });
             // POSSIBLE TODO: Log that this user has already seen this doc???
         }
         // var currentDoc = Session.get("currentDoc");
