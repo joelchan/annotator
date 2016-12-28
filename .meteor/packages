@@ -4,36 +4,37 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-insecure
+insecure@1.0.7
 twbs:bootstrap
-underscore
+underscore@1.0.10
 iron:router
 sacha:spin
 ian:accounts-ui-bootstrap-3
-accounts-password
+accounts-password@1.3.3
 jag:pince
-random
+random@1.0.10
 
 
 pfafman:filesaver
 meteorhacks:search-source
 stef:meteor-bootstrap-drawer
 meteorhacks:kadira
-meteor-base
-mobile-experience
-mongo
+meteor-base@1.0.4
+mobile-experience@1.0.4
+mongo@1.1.14
 blaze-html-templates
-session
-jquery
-tracker
-logging
-reload
-ejson
+session@1.1.7
+jquery@1.11.10
+tracker@1.1.1
+logging@1.1.16
+reload@1.1.11
+ejson@1.0.13
 spacebars
-check
-standard-minifier-css
-standard-minifier-js
+check@1.2.4
+standard-minifier-css@1.3.2
+standard-minifier-js@1.2.1
+
+
+shell-server
 meteorhacks:npm
-
-
 npm-container
