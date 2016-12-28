@@ -268,12 +268,12 @@ Template.SearchBar.events({
                   var d = new Date().getTime();
                   var duration = d-previous;
                   logger.debug("Completed in " + duration/1000 + " seconds");
-                  logger.debug("Shuffling the results...");
-                  nonIdentityMatches = shuffle(nonIdentityMatches);
-                  var previous = d;
-                  var d = new Date().getTime();
-                  var duration = d-previous;
-                  logger.debug("Completed in " + duration/1000 + " seconds");
+                  // logger.debug("Shuffling the results...");
+                  // nonIdentityMatches = shuffle(nonIdentityMatches);
+                  // var previous = d;
+                  // var d = new Date().getTime();
+                  // var duration = d-previous;
+                  // logger.debug("Completed in " + duration/1000 + " seconds");
                   // var previous = d;
                   // var d = new Date().getTime();
                   // var duration = d-previous;
@@ -356,6 +356,8 @@ Template.SearchBar.events({
 
 Template.SearchResults.onCreated(function() {
   Session.set("matchingDocs", []);
+  Session.set("allMatches", []);
+  Session.set("lastDocMarker", 50);
   var self = this;
   self.autorun(function() {
     var docIDs = [Session.get("currentDoc")._id];
@@ -461,18 +463,52 @@ Template.SearchResults.events({
   }
 });
 
+Template.Selections.onCreated(function() {
+  Session.set("matchingDocs", []);
+  Session.set("allMatches", []);
+  Session.set("lastDocMarker", 50);
+  Session.set("possibleMatches", []);
+  Session.set("bestMatches", []);
+  MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+  var self = this;
+  self.autorun(function() {
+    var docIDs = [];
+    Session.get("bestMatches").forEach(function(doc) {
+        docIDs.push(doc._id);
+    });
+    Session.get("possibleMatches").forEach(function(doc) {
+        docIDs.push(doc._id);
+    });
+    self.subscribe('specificDocs', docIDs);
+  });
+});
+
 Template.Selections.rendered = function() {
+  Session.set("matchingDocs", []);
+  Session.set("allMatches", []);
+  Session.set("lastDocMarker", 50);
   MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
 }
 
 Template.Selections.helpers({
     bestMatches: function() {
         // return getBest();
-        return Session.get("bestMatches");
+        var bestMatches = [];
+        Session.get("bestMatches").forEach(function(m) {
+          bestMatches.push(m._id);
+        });
+        return Documents.find({_id: {$in: bestMatches}});
+        // return Session.get("bestMatches");
+
     },
     possibleMatches: function() {
         // return getPossible();
-        return Session.get("possibleMatches");
+        // return Session.get("possibleMatches");
+        var possibleMatches = [];
+        Session.get("possibleMatches").forEach(function(m) {
+          possibleMatches.push(m._id);
+        });
+        return Documents.find({_id: {$in: possibleMatches}});
         // var user = Session.get("currentUser");
         // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
         // var matchingDocs = []

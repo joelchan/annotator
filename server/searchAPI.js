@@ -32,7 +32,19 @@ Meteor.methods({
     });
     logger.trace("query terms: " + JSON.stringify(expanded));
     // perform the search
-    return Documents.find({allwords: {$in: expanded}}).fetch();
+    // return Documents.find({allwords: {$in: expanded}}).fetch();
+    var results = Documents.find({$text: {$search: expanded.join(" ")}},
+      {fields: {
+        score: { $meta: "textScore" }},
+        sort: {score: { $meta: "textScore" }}
+      }).fetch();
+    return results;
+    // var result_ids = [];
+    // results.forEach(function(r) {
+    //   result_ids.push(r._id);
+    // });
+    // return result_ids;
+
   },
   getPossible: function(user, currentDoc) {
       // var user = Session.get("currentUser");
@@ -44,6 +56,7 @@ Meteor.methods({
           }
       });
       return Documents.find({_id: {$in: matchingDocs}}).fetch();
+      // return matchingDocs;
   },
   getBest: function(user, currentDoc) {
       // var user = Session.get("currentUser");
@@ -55,6 +68,7 @@ Meteor.methods({
           }
       });
       return Documents.find({_id: {$in: matchingDocs}}).fetch();
+      // return matchingDocs;
   },
   getNewDoc: function(user, currentDoc) {
     var documents;
