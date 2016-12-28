@@ -6,6 +6,10 @@ Meteor.publish('documents', function() {
   return Documents.find();
 });
 
+Meteor.publish('specificDocs', function(docIDs) {
+  return Documents.find({_id: {$in: docIDs}});
+});
+
 Meteor.publish('singleDoc', function(docID) {
   return Documents.find({_id: docID});
 });

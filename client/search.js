@@ -346,12 +346,25 @@ Template.SearchBar.events({
         $('.doc-match').unhighlight();
         Session.set("isLoading", false);
         Session.set("matchingDocs", []);
+        Session.set("allMatches", []);
     },
 
     '.click .search-help' : function() {
         EventLogger.logHintUse();
     },
-})
+});
+
+Template.SearchResults.onCreated(function() {
+  Session.set("matchingDocs", []);
+  var self = this;
+  self.autorun(function() {
+    var docIDs = [Session.get("currentDoc")._id];
+    Session.get("matchingDocs").forEach(function(doc) {
+        docIDs.push(doc._id);
+    });
+    self.subscribe('specificDocs', docIDs);
+  });
+});
 
 Template.SearchResults.rendered = function () {
     // DocSearch.search("############################");
@@ -382,7 +395,15 @@ Template.SearchResults.helpers({
         //
         // return queryMatchData.matches;
         // return Session.get("lastMatchSet").matches;
-        return Session.get("matchingDocs");
+        // return Session.get("matchingDocs");
+        var screenOuts = [Session.get("currentDoc")._id];
+        Session.get("possibleMatches").forEach(function(m) {
+          screenOuts.push(m._id);
+        });
+        Session.get("bestMatches").forEach(function(m) {
+          screenOuts.push(m._id);
+        });
+        return Documents.find({_id: {$nin: screenOuts}});
         // return [];
     },
     hasMatches: function() {
