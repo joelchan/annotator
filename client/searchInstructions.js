@@ -5,7 +5,22 @@ Logger.setLevel('Client:searchInstructions', 'trace');
 // Logger.setLevel('Client:searchInstructions', 'info');
 // Logger.setLevel('Client:searchInstructions', 'warn');
 
-
+Template.SearchInstructions.helpers({
+  searchType: function() {
+    if (Session.equals("searchType", "p")) {
+      return "achieve a very similar PURPOSE (i.e., are useful for similar reasons)";
+    } else {
+      return "have very similar mechanisms (i.e., achieve their purpose with similar mechanisms/components)";
+    }
+  },
+  exampleReason: function() {
+    if (Session.equals("searchType", "p")) {
+      return "SEPARATE objects (chopped food, dust bunnies) from a host object (knife, broom bristles)";
+    } else {
+      return "CAUSE an object (knife, broom bristles) to PASS THROUGH another object (clip, rubber teeth)";
+    }
+  },
+});
 
 Template.SearchInstructions.events({
     'click .search-instructions-next-1' : function() {
@@ -38,12 +53,14 @@ Template.SearchInstructions.events({
             Meteor.call("getNewDoc", Session.get("currentUser"), doc, function(err, result) {
               logger.trace("Sending user to search task with document " + JSON.stringify(doc));
               Router.go("Search", {userID: userID,
-                                      docID: newDoc._id});
+                                    docID: newDoc._id,
+                                    searchType: Session.get("searchType")});
             });
         } else {
             logger.trace("Sending user to search task with document " + JSON.stringify(doc));
             Router.go("Search", {userID: userID,
-                                    docID: doc._id});
+                                    docID: doc._id,
+                                    searchType: Session.get("searchType")});
         }
         // EventLogger.logBeginDocument(doc._id);
     },

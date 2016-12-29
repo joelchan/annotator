@@ -647,7 +647,24 @@ Template.Document.events({
         }
         MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
     }
-})
+});
+
+Template.SearchHelp.helpers({
+  searchType: function() {
+    if (Session.equals("searchType", "p")) {
+      return "achieve a very similar PURPOSE (i.e., are useful for similar reasons)";
+    } else {
+      return "have very similar mechanisms (i.e., achieve their purpose with similar mechanisms/components)";
+    }
+  },
+  exampleReason: function() {
+    if (Session.equals("searchType", "p")) {
+      return "SEPARATE objects (chopped food, dust bunnies) from a host object (knife, broom bristles)";
+    } else {
+      return "CAUSE an object (knife, broom bristles) to PASS THROUGH another object (clip, rubber teeth)";
+    }
+  },
+});
 
 // Template.Highlighter.helpers({
 //     seedWords: function() {

@@ -8,7 +8,7 @@ Logger.setLevel('Client:land', 'trace');
 Template.land.events({
     'click .continue' : function() {
         var userName = $('#userName').val();
-        var docExtID = $('#docTitle').val();
+        var docData = $('#docTitle').val();
         // if (docExtID == "") {
         //   var newDoc = getRandomElement(Documents.find().fetch());
         //   docTitle = newDoc.fileName.replace(".txt", "");
@@ -23,12 +23,15 @@ Template.land.events({
             logger.trace("User " + userName + " clicked continue");
             userID = UserManager.loginUser(userName);
             var user = MyUsers.findOne({_id: userID});
-            if (docExtID == "") {
+            if (docData == "") {
               Meteor.call("getNewDoc", user, function(err, newDoc) {
-                Router.go("SearchInstructions", {userID: userID, extID: newDoc.extID});
+                Router.go("SearchInstructions", {userID: userID, extID: newDoc.extID, searchType: "p"});
               });
             } else {
-              Router.go("SearchInstructions", {userID: userID, extID: docExtID});
+              var docDataArr = docData.split("-");
+              var docExtID = docDataArr[0];
+              var searchType = docDataArr[1];
+              Router.go("SearchInstructions", {userID: userID, extID: docExtID, searchType: searchType});
             }
         }
         // Router.go("Tutorial", {userID: userID});
