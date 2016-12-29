@@ -248,7 +248,7 @@ Template.SearchBar.events({
           Meteor.call('lemmaSearch', query,
               function(error, allMatches) {
                   if (allMatches.length < 50) {
-                    Session.set(lastDocMarker, allMatches.length);
+                    Session.set("lastDocMarker", allMatches.length);
                   } else {
                     Session.set("lastDocMarker", 50);
                   }
@@ -446,6 +446,15 @@ Template.SearchResults.helpers({
       } else {
         return false;
       }
+    },
+    remaining: function() {
+      var lastDocMarker = Session.get("lastDocMarker");
+      var newLastDocMarker = lastDocMarker + 50;
+      var totalNumDocs = Session.get("allMatches").length;
+      if (newLastDocMarker > totalNumDocs) {
+        newLastDocMarker = totalNumDocs;
+      }
+      return newLastDocMarker-lastDocMarker;
     }
 });
 

@@ -186,7 +186,9 @@
             </div>
         </div>
         {{#if hasMoreMatches}}
-          <button class="btn btn-primary load-more">Load {{remaining}} more results</button>
+          <div class="load-more-container">
+            <button class="btn btn-link load-more">Load {{remaining}} more results</button>
+          </div>
         {{/if}}
     </div>
 </template>
