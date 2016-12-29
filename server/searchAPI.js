@@ -46,27 +46,39 @@ Meteor.methods({
     // return result_ids;
 
   },
-  getPossible: function(user, currentDoc) {
+  getPossible: function(user, currentDoc, searchType) {
       // var user = Session.get("currentUser");
-      var docMatches = DocMatches.find({userID: user._id, seedDocID: currentDoc._id}).fetch();
+      var docMatches = DocMatches.find({userID: user._id,
+        seedDocID: currentDoc._id,
+        searchType: searchType
+      }).fetch();
+      // logger.trace("All matches are: " + JSON.stringify(docMatches));
       var matchingDocs = []
       docMatches.forEach(function(m) {
           if (!m.bestMatch) {
               matchingDocs.push(m.matchDocID);
           }
       });
+      logger.trace("Possible match IDs are: " + JSON.stringify(matchingDocs));
+      // logger.trace("Possible matches are: " + JSON.stringify(Documents.find({_id: {$in: matchingDocs}}).fetch()));
       return Documents.find({_id: {$in: matchingDocs}}).fetch();
       // return matchingDocs;
   },
-  getBest: function(user, currentDoc) {
+  getBest: function(user, currentDoc, searchType) {
       // var user = Session.get("currentUser");
-      var docMatches = DocMatches.find({userID: user._id, seedDocID: currentDoc._id}).fetch();
+      var docMatches = DocMatches.find({userID: user._id,
+        seedDocID: currentDoc._id,
+        searchType: searchType
+      }).fetch();
+      // logger.trace("All matches are: " + JSON.stringify(docMatches));
       var matchingDocs = []
       docMatches.forEach(function(m) {
           if (m.bestMatch) {
               matchingDocs.push(m.matchDocID);
           }
       });
+      logger.trace("Best match IDs are: " + JSON.stringify(matchingDocs));
+      // logger.trace("Best matches are: " + JSON.stringify(Documents.find({_id: {$in: matchingDocs}}).fetch()));
       return Documents.find({_id: {$in: matchingDocs}}).fetch();
       // return matchingDocs;
   },

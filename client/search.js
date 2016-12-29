@@ -427,7 +427,7 @@ Template.SearchResults.helpers({
     numMatches: function() {
         // return getMatches().matches.length;
         // return Session.get("matchingDocs").length;
-        return Session.get("allMatches").length;
+        return Session.get("allMatches").length - Session.get("possibleMatches").length - Session.get("bestMatches").length;
         // return Session.get("lastMatchSet").matches.length;
         // return DocSearch.getData({
         //       transform: function(matchText, regExp) {
@@ -459,7 +459,10 @@ Template.SearchResults.events({
       newLastDocMarker = totalNumDocs;
     }
     Session.set("lastDocMarker", newLastDocMarker);
-    MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+    MatchManager.updateMatches(Session.get("currentUser"),
+      Session.get("currentDoc"),
+      Session.get("searchType")
+    );
   }
 });
 
@@ -469,7 +472,10 @@ Template.Selections.onCreated(function() {
   Session.set("lastDocMarker", 50);
   Session.set("possibleMatches", []);
   Session.set("bestMatches", []);
-  MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+  MatchManager.updateMatches(Session.get("currentUser"),
+    Session.get("currentDoc"),
+    Session.get("searchType")
+  );
   var self = this;
   self.autorun(function() {
     var docIDs = [];
@@ -487,7 +493,12 @@ Template.Selections.rendered = function() {
   Session.set("matchingDocs", []);
   Session.set("allMatches", []);
   Session.set("lastDocMarker", 50);
-  MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+  Session.set("possibleMatches", []);
+  Session.set("bestMatches", []);
+  MatchManager.updateMatches(Session.get("currentUser"),
+    Session.get("currentDoc"),
+    Session.get("searchType")
+  );
 }
 
 Template.Selections.helpers({
@@ -521,6 +532,13 @@ Template.Selections.helpers({
         return Session.get("possibleMatches").length;
         // return getPossible().count();
     },
+    purposeSearch: function() {
+      if (Session.equals("searchType", "p")) {
+        return true;
+      } else {
+        return false;
+      }
+    }
 });
 
 Template.Selections.events({
@@ -607,7 +625,10 @@ Template.Document.events({
         logger.debug("Clicked match button");
         var thisDoc = this;
         MatchManager.possibleMatch(Session.get("currentDoc"), thisDoc);
-        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+        MatchManager.updateMatches(Session.get("currentUser"),
+          Session.get("currentDoc"),
+          Session.get("searchType")
+        );
         // var matchData = Session.get("lastMatchSet");
         // logger.trace("Last match set: " + JSON.stringify(matchData));
         // var allMatches = matchData.matches;
@@ -626,7 +647,10 @@ Template.Document.events({
         logger.debug("Clicked match remove button");
         logger.trace(this);
         MatchManager.notMatch(Session.get("currentDoc"), this);
-        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+        MatchManager.updateMatches(Session.get("currentUser"),
+          Session.get("currentDoc"),
+          Session.get("searchType")
+        );
         // EventLogger.logRejectPreviousSelection(this);
     },
     'click .match-best': function() {
@@ -645,7 +669,10 @@ Template.Document.events({
         } else {
             MatchManager.bestMatch(Session.get("currentDoc"), this);
         }
-        MatchManager.updateMatches(Session.get("currentUser"), Session.get("currentDoc"));
+        MatchManager.updateMatches(Session.get("currentUser"),
+          Session.get("currentDoc"),
+          Session.get("searchType")
+        );
     }
 });
 
