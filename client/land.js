@@ -8,11 +8,11 @@ Logger.setLevel('Client:land', 'trace');
 Template.land.events({
     'click .continue' : function() {
         var userName = $('#userName').val();
-        var docTitle = $('#docTitle').val();
-        if (docTitle == "") {
-          var newDoc = getRandomElement(Documents.find().fetch());
-          docTitle = newDoc.fileName.replace(".txt", "");
-        }
+        var docExtID = $('#docTitle').val();
+        // if (docExtID == "") {
+        //   var newDoc = getRandomElement(Documents.find().fetch());
+        //   docTitle = newDoc.fileName.replace(".txt", "");
+        // }
         // if (userName == "" || docTitle == "") {
         //     logger.warn("User is not logged in");
         //     alert("You need to have entered both your MTurkID and the docID from the HIT to continue");
@@ -22,7 +22,14 @@ Template.land.events({
         } else {
             logger.trace("User " + userName + " clicked continue");
             userID = UserManager.loginUser(userName);
-            Router.go("SearchInstructions", {userID: userID, docTitle: docTitle});
+            var user = MyUsers.findOne({_id: userID});
+            if (docExtID == "") {
+              Meteor.call("getNewDoc", user, function(err, newDoc) {
+                Router.go("SearchInstructions", {userID: userID, extID: newDoc.extID});
+              });
+            } else {
+              Router.go("SearchInstructions", {userID: userID, extID: docExtID});
+            }
         }
         // Router.go("Tutorial", {userID: userID});
         // if (Meteor.user()) {

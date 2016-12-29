@@ -31,13 +31,15 @@ Template.SearchInstructions.events({
     'click .search-instructions-next-finish' : function() {
         userID = Session.get("currentUser")._id;
         // var docTitle = Session.get("currentDocTitle") + ".txt";
-        var docTitle = Session.get("currentDocTitle");
-        var doc = Documents.findOne({fileName: docTitle});
+        var extID = Session.get("currentDocExtID");
+        var doc = Documents.findOne({extID: extID});
         if (isInList(userID, doc.annotatedBy)) {
-            var newDoc = DocumentManager.sampleDocument();
-            logger.trace("Sending user to search task with document " + JSON.stringify(doc));
-            Router.go("Search", {userID: userID,
-                                    docID: newDoc._id});
+            // var newDoc = DocumentManager.sampleDocument();
+            Meteor.call("getNewDoc", Session.get("currentUser"), doc, function(err, result) {
+              logger.trace("Sending user to search task with document " + JSON.stringify(doc));
+              Router.go("Search", {userID: userID,
+                                      docID: newDoc._id});
+            });
         } else {
             logger.trace("Sending user to search task with document " + JSON.stringify(doc));
             Router.go("Search", {userID: userID,

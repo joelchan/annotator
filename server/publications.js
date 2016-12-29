@@ -14,6 +14,10 @@ Meteor.publish('singleDoc', function(docID) {
   return Documents.find({_id: docID});
 });
 
+Meteor.publish('singleDocByExtID', function(extID) {
+  return Documents.find({extID: extID});
+});
+
 // Meteor.publish('sentences', function() {
 //   return Sentences.find();
 // });
