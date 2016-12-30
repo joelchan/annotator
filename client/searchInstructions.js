@@ -50,10 +50,11 @@ Template.SearchInstructions.events({
         var doc = Documents.findOne({extID: extID});
         if (isInList(userID, doc.annotatedBy)) {
             // var newDoc = DocumentManager.sampleDocument();
+            logger.debug("User has already done this doc, sampling a new one...");
             Meteor.call("getNewDoc", Session.get("currentUser"), doc, function(err, result) {
               logger.trace("Sending user to search task with document " + JSON.stringify(doc));
               Router.go("Search", {userID: userID,
-                                    docID: newDoc._id,
+                                    docID: doc._id,
                                     searchType: Session.get("searchType")});
             });
         } else {
