@@ -69,7 +69,7 @@ Template.AnalogySearcher.onRendered(function() {
       {
         element: ".best-matches",
         title: "Interface walkthrough (Step 6 of 7)",
-        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match, and a description of how it is analogous to the seed document</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
+        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
         backdrop: true,
         placement: "left",
       },
