@@ -603,9 +603,9 @@ Template.Selections.events({
         // } else if (selections.length > 1) {
         //     alert("You must select only one best match");
         } else {
-            if ($("#matchDescription").val() == "") {
-                alert("Please describe how the match and seed document are analogous.");
-            } else {
+            // if ($("#matchDescription").val() == "") {
+                // alert("Please describe how the match and seed document are analogous.");
+            // } else {
                 var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
                                                   matchDocID: bestMatches[0]._id,
@@ -614,7 +614,8 @@ Template.Selections.events({
                 logger.trace("Best match: " + JSON.stringify(bestMatch));
                 var user = Session.get("currentUser");
                 var doc = Session.get("currentDoc");
-                var summary = $("#matchDescription").val();
+                // var summary = $("#matchDescription").val();
+                var summary = "NoSummary";
 
                 // generate completion code
                 var completionCode = Random.hexString(20).toLowerCase();
@@ -637,7 +638,7 @@ Template.Selections.events({
                 Router.go("Finish", {matchID: finalMatch._id});
 
                 // $('.highlightDocButton').click();
-            }
+            // }
         }
     }
 });
