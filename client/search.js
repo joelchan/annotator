@@ -41,7 +41,7 @@ Template.AnalogySearcher.onRendered(function() {
       {
         element: ".search-bar",
         title: "Interface walkthrough (Step 2 of 7)",
-        content: "Use this search bar to enter keywords/phrases and search for possible analogous matches in our database of 399 other product descriptions.",
+        content: "Use this search bar to enter keywords/phrases and search for possible analogous matches in our database of 8,348 other product descriptions.",
         backdrop: true,
         placement: "bottom",
       },
@@ -226,7 +226,7 @@ Template.SeedDocument.events({
               Router.go("Search", {userID: user._id,
                                    docID: newDoc._id,
                                    searchType: Session.get("searchType")
-                                  });              
+                                  });
             });
             // POSSIBLE TODO: Log that this user has already seen this doc???
         }
