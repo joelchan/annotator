@@ -37,7 +37,7 @@ Meteor.methods({
       {$text:
         {
           $search: expanded.join(" "),
-          $language: "none" // avoid stemming
+          // $language: "none" // avoid stemming
         },
       },
       { // for sorting

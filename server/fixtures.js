@@ -34,7 +34,9 @@ if (Documents.find().count() == 0) {
   });
 
   // index for hopefully faster performance!
-  Documents.createIndex({allwords: "text"});
+  Documents._ensureIndex({allwords: "text"},
+                         {default_language: "none"} // avoid stemming
+                       );
   // Sentences._ensureIndex({docID: 1});
   // Words._ensureIndex({sentenceID: 1});
 
