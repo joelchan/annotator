@@ -205,7 +205,8 @@
           <div class="modal-body">
             <h3>What am I looking for again?</h3>
             <div class="inst-start">
-                <p>We need you to help us find a good <b>analogy</b> for a target product description. Two products are analogous if they both <b>{{searchType}}</b></p>
+                <p>We need you to help us find a good <b>analogy</b> for a target product description. Two products are analogous if they both <b>{{searchType}}</b>.</p>
+                <p>We are especially interested in <b>analogies between products that are from <u>different domains</u> (e.g., different product categories).</b></p>
                 <p>As an example, consider the following two product descriptions.</p>
                 <div class="container">
                     <div class="col-md-4 col-xs-4 doc" style="margin-right:10px;">
@@ -215,7 +216,7 @@
                         Broom Groomer is a step-on dustpan with added functionality that makes sweeping easier. Rubber "teeth" on the back of the dustpan let you quickly and easily comb out dust bunnies from your broom's bristles.
                     </div>
                 </div>
-                <p>These two products are analogous because they both <b>{{exampleReason}}</b></p>
+                <p>These two products are analogous because they both <b>{{exampleReason}}</b>. The products are also from <b>different domains</b> ("Glide" is a <u>cooking</u> product, while "Broom Groomer" is a <u>cleaning</u> product).</p>
             </div>
             <!-- <div class="inst-superficial">
                 <p>We are specifically <b>not</b> looking for matches to a product based on <u>superficial similarity</u>, but do not solve similar problems or use similar key mechanisms. For example, consider the following pair of products, which are similar in that they are both "food/cooking/kitchen" products, but solve very different problems with different mechanisms.</p>
@@ -246,7 +247,7 @@
 
 <template name="SearchItem">
     <button class="btn btn-default search-query-item" type="button" id="{{_id}}">
-      {{query}} <span class="badge">{{numMatches}}</span>      
+      {{query}} <span class="badge">{{numMatches}}</span>
     </button>
 </template>
 

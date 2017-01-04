@@ -1,0 +1,302 @@
+[
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuPgoEJ84Czf72HqT", 
+    "_id": "FJ9BzGbprMHsKcQvS", 
+    "matchDocID": "CX6fuXGj75ZdnENaF", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "they both help the user hit a target that is hard to hit because it is moving", 
+    "bestMatch": true, 
+    "seedDocID": "uuPgoEJ84Czf72HqT", 
+    "_id": "sL9chCpwyo5Ew7eof", 
+    "matchDocID": "7G67RPrW2fShxbP6Y", 
+    "completionCode": "ab319f7dcb1bca36d37d"
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "JqqQJ5mtPrjPxSbgH", 
+    "matchDocID": "3ZXx3dorj6xL28GGe", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "ZpPbineSPEAFRJgoS", 
+    "matchDocID": "75nXtNMJPuzBfNhLS", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "P7diYMt7WWqqRXFpf", 
+    "matchDocID": "82XsXbyZtFBzxM8XJ", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "tkQu38ePpPwBNN7fe", 
+    "matchDocID": "9c4xkm4eZ4hB729Kd", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "NZWDB2Sux8dxEv5m3", 
+    "matchDocID": "BNMJaA6bJFbvEAAfS", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "FqqMZE4BN9xMrkq9D", 
+    "matchDocID": "BbtQpg6aSEy4qQobJ", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "b5w4wsA7TndM2Yt8g", 
+    "matchDocID": "CuFB5v7C383rtbFvi", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "vw9TwLKezmRKCJ57A", 
+    "matchDocID": "DodAphFN8DZLsRLf7", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "vxx4yWb2CzDeG9nNv", 
+    "summary": "passively generate electricity for the home", 
+    "bestMatch": true, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "wwemQ6uD46ydrYiYd", 
+    "matchDocID": "2Mfr9LLpYJNzsa2cQ", 
+    "completionCode": "7437149b2de05a3b0aa9"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "ArpRLvtCDawpuq2Dk", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "bTFgSrnDcBCAyfogs", 
+    "matchDocID": "Pi22tWJzfqrTJ529Q", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "ArpRLvtCDawpuq2Dk", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "kySrB4QQdPERoqPYq", 
+    "matchDocID": "yhM68oEGr9jDZafzC", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "ArpRLvtCDawpuq2Dk", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "huzgT52Kjd5gN2ykw", 
+    "matchDocID": "gRKmmL2eSTbeQJpcK", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "ArpRLvtCDawpuq2Dk", 
+    "summary": "induction coil", 
+    "bestMatch": true, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "FRYttgXsBCKHynT6q", 
+    "matchDocID": "DodAphFN8DZLsRLf7", 
+    "completionCode": "6f901629e51a81bada6b"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "ArpRLvtCDawpuq2Dk", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "bivAwrYJMNw43AboZ", 
+    "matchDocID": "ddwNAvEE5WeJ69Tdi", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "e9tA4XpEufYam6syC", 
+    "matchDocID": "8j4KBemfvrD3iya3p", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "EWzSqgFPSwzFjS7kr", 
+    "matchDocID": "W2dvWRRKY7CBTyF5g", 
+    "completionCode": "212a6d2dfd806ad13eb4"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "9QKoqBMbkuzcbxpew", 
+    "matchDocID": "X9dqZkqDBNeGrBqea", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "aeFBHSDnDgcWbBybj", 
+    "matchDocID": "ftfTSaArzZiARQCWQ", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "uuFJ4NYF3qSWb3w3H", 
+    "_id": "hq23HCjGuvBDpgAjY", 
+    "matchDocID": "vtntGiMAMCyy9LAxi", 
+    "completionCode": "206fbef19033fa5b3b02"
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "5vuAH6Gam4RhYKrhj", 
+    "_id": "gBBvNS3mHZ6zYmXi6", 
+    "matchDocID": "8PcQzCJoWb3neZRmP", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "5vuAH6Gam4RhYKrhj", 
+    "_id": "Fv2jgzJ7jsRBukpnW", 
+    "matchDocID": "xRGubiqLn5KT577Y9", 
+    "completionCode": "c0e041779f64d92a400a"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m\n", 
+    "bestMatch": true, 
+    "seedDocID": "5vuAH6Gam4RhYKrhj", 
+    "_id": "Dd8mGaZbKRB2e9jz6", 
+    "matchDocID": "4FnGqWRaTngiy8YMJ", 
+    "completionCode": "5dea06998957311fd883"
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "MgeL4Jo7SCnYnmsLs", 
+    "_id": "urqZ5Me3GnZ4mHq5z", 
+    "matchDocID": "3NCwbAmnan8dGWcBv", 
+    "completionCode": "a9ae39a3b0bd897b8935"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "MgeL4Jo7SCnYnmsLs", 
+    "_id": "fw6d5pW3sX9eFRCkt", 
+    "matchDocID": "FHZStsdhfQJEai5ja", 
+    "completionCode": "53df660c63a80808aa4b"
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "kk4Qu6RxWmo9Mv5SS", 
+    "_id": "WtgbnTxqgzHTwvg9y", 
+    "matchDocID": "Avw2CMqNQSPgxWfea", 
+    "completionCode": "f64489aa6d04e6953279"
+  }, 
+  {
+    "searchType": "m", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "m", 
+    "bestMatch": true, 
+    "seedDocID": "kk4Qu6RxWmo9Mv5SS", 
+    "_id": "4RNBfYeKgbsniajs5", 
+    "matchDocID": "58u8ZR5XT6gq3sGPr", 
+    "completionCode": "58582a8fdec241cfd784"
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": false, 
+    "seedDocID": "zz8fyGRKPJ49vcv4n", 
+    "_id": "i2ifwKCSPJ9gaB5RX", 
+    "matchDocID": "3a36M28TX9yz2LRWy", 
+    "completionCode": ""
+  }, 
+  {
+    "searchType": "p", 
+    "userID": "tjYaz2uofgsYHm8vu", 
+    "summary": "", 
+    "bestMatch": true, 
+    "seedDocID": "zz8fyGRKPJ49vcv4n", 
+    "_id": "jrAmLB35fDE8X2isY", 
+    "matchDocID": "3a36M28TX9yz2LRWy", 
+    "completionCode": ""
+  }
+]

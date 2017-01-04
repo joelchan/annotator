@@ -226,7 +226,7 @@ Template.SeedDocument.events({
               Router.go("Search", {userID: user._id,
                                    docID: newDoc._id,
                                    searchType: Session.get("searchType")
-                                  });
+                                  });              
             });
             // POSSIBLE TODO: Log that this user has already seen this doc???
         }
@@ -374,7 +374,9 @@ Template.SearchBar.events({
 
     // clear full-text search of idea content
     'click .search-remove-btn' : function(){
-        implicitRejections();
+        if (Session.get("lastSearch").searchID != "") {
+           implicitRejections();
+        }
         Session.set("searchQuery", dummyQuery);
         // DocSearch.search("############################");
         $('.search-apply-btn').removeClass('btn-success');
@@ -383,6 +385,10 @@ Template.SearchBar.events({
         Session.set("isLoading", false);
         Session.set("matchingDocs", []);
         Session.set("lastSearch", {'matches': [], 'searchID': ""});
+        MatchManager.updateMatches(Session.get("currentUser"),
+          Session.get("currentDoc"),
+          Session.get("searchType")
+        );
     },
 
     '.click .search-help' : function() {
