@@ -33,11 +33,20 @@ Meteor.methods({
     logger.trace("query terms: " + JSON.stringify(expanded));
     // perform the search
     // return Documents.find({allwords: {$in: expanded}}).fetch();
-    var results = Documents.find({$text: {$search: expanded.join(" ")}},
-      {fields: {
-        score: { $meta: "textScore" }},
-        sort: {score: { $meta: "textScore" }}
-      }).fetch();
+    var results = Documents.find(
+      {$text:
+        {
+          $search: expanded.join(" "),
+          $language: "none" // avoid stemming
+        },
+      },
+      { // for sorting
+        fields: {
+          score: { $meta: "textScore" }},
+          sort: {score: { $meta: "textScore" }}
+       }
+    ).fetch();
+    logger.trace("Found " + results.length + " results");
     return results;
     // var result_ids = [];
     // results.forEach(function(r) {

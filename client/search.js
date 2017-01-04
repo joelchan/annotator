@@ -111,7 +111,7 @@ Template.AnalogySearcher.onRendered(function() {
     if (walkthrough.ended()) {
         walkthrough.restart();
     }
-    Session.set("lastMatchSet", {'matches': [], 'ranks':[]});
+    Session.set("matchingDocs", []);
     Session.set("lastQuery", "");
     Session.set("searchQuery", "");
 });
@@ -137,8 +137,16 @@ Template.SeedDocument.helpers({
         return Session.get("currentDoc").sentences;
     },
     searches: function() {
-        var allSearches = Searches.find({userID: Session.get("currentUser")._id, seedDocID: Session.get("currentDoc")._id},
-            {sort: {time: -1}}).fetch();
+        var allSearches = Searches.find(
+          {
+            userID: Session.get("currentUser")._id,
+            seedDocID: Session.get("currentDoc")._id,
+            searchType: Session.get("searchType")
+          },
+          {
+            sort: {time: -1}
+          }
+        ).fetch();
         var uniqueSearches = [];
         var uniqueQueries = [];
         allSearches.forEach(function(s) {
@@ -174,7 +182,8 @@ Template.SeedDocument.events({
 
 Template.SearchItem.helpers({
     numMatches: function() {
-        return this.matches.matches.length;
+        // return Session.get("allMatches").length;
+        return this.matches.length;
     }
 });
 
@@ -215,7 +224,9 @@ Template.SeedDocument.events({
               Session.set("currentDoc", newDoc);
               logger.debug("Refreshing page with new doc");
               Router.go("Search", {userID: user._id,
-                                      docID: newDoc._id});
+                                   docID: newDoc._id,
+                                   searchType: Session.get("searchType")
+                                  });
             });
             // POSSIBLE TODO: Log that this user has already seen this doc???
         }
@@ -242,7 +253,9 @@ Template.SearchBar.events({
         // var queryMatchData = getMatches();
         $('.doc-match').unhighlight();
         if (query != lastQuery) {
-          implicitRejections();
+          if (lastQuery) {
+            implicitRejections();
+          }
           d = new Date().getTime();
           logger.debug("Starting search...");
           Meteor.call('lemmaSearch', query,
@@ -280,23 +293,46 @@ Template.SearchBar.events({
                   // logger.debug("Completed in " + duration/1000 + " seconds");
                   // logger.debug("Setting session data...");
                   $('.doc-match').highlight(query.split(" "));
-                  Session.set("allMatches", nonIdentityMatches);
                   // sample 50 to initially render
                   var currentSample = nonIdentityMatches.slice(0,50);
                   logger.debug("Noting the ranks of the results...");
                   var ranks = {}
                   var rank = 1;
-                  currentSample.forEach(function(match) {
-                      ranks[match._id] = rank;
-                      rank += 1;
-                  })
-                  var data = {'matches': currentSample, 'ranks': ranks}
+                  var logData = []
+                  nonIdentityMatches.forEach(function(match) {
+                    ranks[match._id] = rank;
+                    rank += 1;
+                    logData.push(
+                      {
+                        'matchDocID': match._id,
+                        'matchDocTitle': match.fileName,
+                        'score': match.score
+                      }
+                    );
+                    // })
+                  });
+                  var matchingDocs = {'matches': currentSample, 'ranks': ranks}
                   Session.set("isLoading", false);
-                  Session.set("lastMatchSet", data);
+                  // Session.set("lastMatchSet", lastMatchSet);
                   Session.set("matchingDocs", currentSample);
-                  if (!Session.equals("lastQuery", query) && query != dummyQuery) {
-                      EventLogger.logNewSearch(query)
-                      SearchManager.newSearch(query, data);
+                  var pastSearch = Searches.findOne(
+                    {
+                      userID: Session.get("currentUser")._id,
+                      seedDocID: Session.get("currentDoc")._id,
+                      query: query,
+                      searchType: Session.get("searchType")
+                    });
+                  if (!Session.equals("lastQuery", query) &&
+                      query != dummyQuery &&
+                      !pastSearch
+                    )
+                  {
+                    var search = SearchManager.newSearch(query, logData, Session.get("searchType"));
+                    Session.set("lastSearch", {'matches': nonIdentityMatches, 'searchID': search._id});
+                    EventLogger.logNewSearch(search)
+                  } else {
+                    // if we returned to a previous search
+                    Session.set("lastSearch", {'matches': nonIdentityMatches, 'searchID': pastSearch._id});
                   }
                   var previous = d;
                   var d = new Date().getTime();
@@ -346,7 +382,7 @@ Template.SearchBar.events({
         $('.doc-match').unhighlight();
         Session.set("isLoading", false);
         Session.set("matchingDocs", []);
-        Session.set("allMatches", []);
+        Session.set("lastSearch", {'matches': [], 'searchID': ""});
     },
 
     '.click .search-help' : function() {
@@ -356,7 +392,7 @@ Template.SearchBar.events({
 
 Template.SearchResults.onCreated(function() {
   Session.set("matchingDocs", []);
-  Session.set("allMatches", []);
+  Session.set("lastSearch", {'matches': [], 'searchID': ""});
   Session.set("lastDocMarker", 50);
   var self = this;
   self.autorun(function() {
@@ -371,7 +407,7 @@ Template.SearchResults.onCreated(function() {
 Template.SearchResults.rendered = function () {
     // DocSearch.search("############################");
     Session.set("searchQuery", dummyQuery);
-    Session.set("allMatches", []);
+    Session.set("lastSearch", {'matches': [], 'searchID': ""});
     Session.set("matchingDocs", []);
     Session.set("isLoading", false);
     Session.set("lastDocMarker", 50);
@@ -427,7 +463,7 @@ Template.SearchResults.helpers({
     numMatches: function() {
         // return getMatches().matches.length;
         // return Session.get("matchingDocs").length;
-        return Session.get("allMatches").length - Session.get("possibleMatches").length - Session.get("bestMatches").length;
+        return Session.get("lastSearch").matches.length - Session.get("possibleMatches").length - Session.get("bestMatches").length;
         // return Session.get("lastMatchSet").matches.length;
         // return DocSearch.getData({
         //       transform: function(matchText, regExp) {
@@ -441,7 +477,7 @@ Template.SearchResults.helpers({
       // return true;
     },
     hasMoreMatches: function() {
-      if (Session.get("allMatches").length - Session.get("matchingDocs").length) {
+      if (Session.get("lastSearch").matches.length - Session.get("matchingDocs").length) {
         return true;
       } else {
         return false;
@@ -450,7 +486,7 @@ Template.SearchResults.helpers({
     remaining: function() {
       var lastDocMarker = Session.get("lastDocMarker");
       var newLastDocMarker = lastDocMarker + 50;
-      var totalNumDocs = Session.get("allMatches").length;
+      var totalNumDocs = Session.get("lastSearch").matches.length;
       if (newLastDocMarker > totalNumDocs) {
         newLastDocMarker = totalNumDocs;
       }
@@ -463,7 +499,7 @@ Template.SearchResults.events({
     logger.debug("loading more documents...");
     var lastDocMarker = Session.get("lastDocMarker");
     var newLastDocMarker = lastDocMarker + 50;
-    var totalNumDocs = Session.get("allMatches").length;
+    var totalNumDocs = Session.get("lastSearch").matches.length;
     if (newLastDocMarker > totalNumDocs) {
       newLastDocMarker = totalNumDocs;
     }
@@ -477,7 +513,7 @@ Template.SearchResults.events({
 
 Template.Selections.onCreated(function() {
   Session.set("matchingDocs", []);
-  Session.set("allMatches", []);
+  Session.set("lastSearch", {'matches': [], 'searchID': ""});
   Session.set("lastDocMarker", 50);
   Session.set("possibleMatches", []);
   Session.set("bestMatches", []);
@@ -500,7 +536,7 @@ Template.Selections.onCreated(function() {
 
 Template.Selections.rendered = function() {
   Session.set("matchingDocs", []);
-  Session.set("allMatches", []);
+  Session.set("lastSearch", {'matches': [], 'searchID': ""});
   Session.set("lastDocMarker", 50);
   Session.set("possibleMatches", []);
   Session.set("bestMatches", []);
@@ -671,7 +707,7 @@ Template.Document.events({
             var confirmMsg = "You can only have one best match at any given moment. If you continue, you will replace the current best match and relegate it to a possible match.";
             if (confirm(confirmMsg)) {
                 // relegate current best match
-                MatchManager.possibleMatch(Session.get("currentDoc"), bestMatches.fetch()[0]);
+                MatchManager.possibleMatch(Session.get("currentDoc"), bestMatches[0]);
                 // create new best
                 MatchManager.bestMatch(Session.get("currentDoc"), this);
             }
@@ -895,7 +931,7 @@ Template.SearchHelp.helpers({
 //     return Documents.find({_id: {$in: matchingDocs}});
 // }
 
-var isPossibleMatch = function(doc) {
+isPossibleMatch = function(doc) {
     var user = Session.get("currentUser");
     var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
     if (docMatch) {
@@ -913,7 +949,7 @@ var isPossibleMatch = function(doc) {
     // return selected;
 }
 
-var isBestMatch = function(doc) {
+isBestMatch = function(doc) {
     var user = Session.get("currentUser");
     var docMatch = DocMatches.findOne({userID: user._id, seedDocID: Session.get("currentDoc")._id, matchDocID: doc._id});
     if (docMatch) {
@@ -923,28 +959,36 @@ var isBestMatch = function(doc) {
     }
 }
 
-var sameMatches = function(set1, set2) {
-    var firstIDs = [];
-    set1.forEach(function(s) {
-        firstIDs.push(s._id);
-    });
-    var secondIDs = [];
-    set2.forEach(function(s) {
-        secondIDs.push(s._id);
-    });
-    return firstIDs.sort().join(',') === secondIDs.sort().join(',');
-}
+// var sameMatches = function(set1, set2) {
+//     var firstIDs = [];
+//     set1.forEach(function(s) {
+//         firstIDs.push(s._id);
+//     });
+//     var secondIDs = [];
+//     set2.forEach(function(s) {
+//         secondIDs.push(s._id);
+//     });
+//     return firstIDs.sort().join(',') === secondIDs.sort().join(',');
+// }
 
 var implicitRejections = function() {
     var lastQuery = Session.get("searchQuery");
-    var matchData = Session.get("lastMatchSet");
-    // logger.trace("Last match set: " + JSON.stringify(matchData));
-    var allMatches = matchData.matches;
-    var ranks = matchData.ranks;
-    allMatches.forEach(function(m) {
-        if (!(isPossibleMatch(m) || isBestMatch(m))) {
-            var thisRank = ranks[m._id];
-            EventLogger.logImplicitReject(lastQuery, m, thisRank);
-        }
+    var matchContext = []
+    Session.get("matchingDocs").forEach(function(m, rank) {
+      if (!(isPossibleMatch(m) || isBestMatch(m))) {
+        matchContext.push({'id': m._id, 'title': m.fileName, 'rank': rank});
+      }
     });
+    EventLogger.logImplicitRejects(lastQuery, matchContext);
+
+    // logger.trace("Last match set: " + JSON.stringify(matchData));
+    // var allMatches = matchData.matches;
+    // var ranks = matchData.ranks;
+    // matchContext.forEach(function(m) {
+    //     // EventLogger.logImplicitReject(lastQuery, m, thisRank);
+    //     if (!(isPossibleMatch(m) || isBestMatch(m))) {
+    //         // var thisRank = ranks[m._id];
+    //         EventLogger.logImplicitReject(lastQuery, m.id, m.title, m.rank, matchContext);
+    //     }
+    // });
 }

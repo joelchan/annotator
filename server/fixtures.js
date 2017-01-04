@@ -5,23 +5,6 @@ Logger.setLevel('Server:fixtures', 'trace');
 // Logger.setLevel('Server:fixtures', 'info');
 // Logger.setLevel('Server:fixtures', 'warn');
 
-if (Posts.find().count() === 0) {
-  Posts.insert({
-    title: 'Introducing Telescope',
-    url: 'http://sachagreif.com/introducing-telescope/'
-  });
-
-  Posts.insert({
-    title: 'Meteor',
-    url: 'http://meteor.com'
-  });
-
-  Posts.insert({
-    title: 'The Meteor Book',
-    url: 'http://themeteorbook.com'
-  });
-}
-
 if (Documents.find().count() == 0) {
   // var doc = new Document("Dummy");
   // var docID = Documents.insert(doc);
@@ -51,7 +34,7 @@ if (Documents.find().count() == 0) {
   });
 
   // index for hopefully faster performance!
-  Documents._ensureIndex({allwords: "text"});
+  Documents.createIndex({allwords: "text"});
   // Sentences._ensureIndex({docID: 1});
   // Words._ensureIndex({sentenceID: 1});
 
