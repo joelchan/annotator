@@ -28,7 +28,7 @@ Template.land.events({
                 Router.go("SearchInstructions", {userID: userID, extID: newDoc.extID, searchType: "p"});
               });
             } else {
-              var docDataArr = docData.split("-");
+              var docDataArr = docData.trim().split("-");
               var docExtID = docDataArr[0];
               var searchType = docDataArr[1];
               Router.go("SearchInstructions", {userID: userID, extID: docExtID, searchType: searchType});
