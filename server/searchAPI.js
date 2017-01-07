@@ -110,5 +110,8 @@ Meteor.methods({
     }
     logger.debug(documents.length + " remaining possible documents to sample from");
     return getRandomElement(documents);
-  }
+  },
+  retrieveDoc: function(extID) {
+    return Documents.findOne({extID: extID});
+  },
 })

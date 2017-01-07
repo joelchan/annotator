@@ -25,13 +25,19 @@ Template.land.events({
             var user = MyUsers.findOne({_id: userID});
             if (docData == "") {
               Meteor.call("getNewDoc", user, function(err, newDoc) {
-                Router.go("SearchInstructions", {userID: userID, extID: newDoc.extID, searchType: "p"});
+                Router.go("SearchScaffold", {userID: userID,
+                                                docID: newDoc._id,
+                                                searchType: "p"});
               });
             } else {
               var docDataArr = docData.trim().split("-");
               var docExtID = docDataArr[0];
               var searchType = docDataArr[1];
-              Router.go("SearchInstructions", {userID: userID, extID: docExtID, searchType: searchType});
+              Meteor.call("retrieveDoc", docExtID, function(err, doc) {
+                  Router.go("SearchScaffold", {userID: userID,
+                                                   docID: doc._id,
+                                                   searchType: searchType});
+              });
             }
         }
         // Router.go("Tutorial", {userID: userID});

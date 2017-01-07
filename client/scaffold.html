@@ -1,0 +1,87 @@
+<template name="Scaffold">
+    <div class="container scaffold-container">
+        <!-- <div class="row"> -->
+            <div id="examples-outer" class="row examples">
+              <h1>Step 1 of 2: Summarize the product</h1>
+              <p>Describe the core purpose and mechanism of the product in concrete terms, and then redescribe it as an abstract pattern.</p>
+              <h2>Follow these examples <span class="search-help">(<a data-toggle="collapse" data-parent="examples-outer" href="#examples-inner">Show/Hide</a>)</span></h2>
+              <div id="examples-inner" class="collapse in examples-inner">
+                <h3>Example 1</h3>
+                <div class="doc">
+                  <h4>Laundry Maid</h4>
+                  <ul>
+                    <li>A washer and dryer that has the ability to transfer the clothes from the washer to the dryer or washer/dryer.</li>
+                    <li>One machine. When washing stops, the machine starts drying.</li>
+                    <li>Smart Washer has built in WIFI,TV, and Controlled by an APP</li>
+                    <li>System takes the drum from the bottom washer to dry up top</li>
+                    <li>This invention is a one of a kind washer dryer in one or two that has a drop away Bottom to the dryer</li>
+                  </ul>
+                </div>
+                <div class="doc-summary">
+                  <p><label>Description: </label> combine washer and dryer <b>BY</b> transferring clothes automatically from washer to dryer</p>
+                  <p><label>Pattern: </label> combine two things you need to do one after the other <b>BY</b> transferring the output of the first to the second automatically</p>
+                </div>
+                <h3>Example 2</h3>
+                <div class="doc">
+                  <h4>Door Knob Protectors</h4>
+                  <ul>
+                    <li>Protects people in shapes and form from transferring diseases and bacteria.</li>
+                    <li>Comes in a box of 100, slips right over the door knob and allows users to use as.</li>
+                  </ul>
+                </div>
+                <div class="doc-summary">
+                  <p><label>Description: </label> prevent germ transfer <b>BY</b> covering doorknob with disposable cover</p>
+                  <p><label>Pattern: </label> prevent one thing from getting to another thing <b>BY</b> putting a disposable barrier between them</p>
+                </div>
+              </div>
+            </div>
+            <div class="row summarize">
+              <h2>Your turn:</h2>
+              <div class="col-md-4 col-xs-4 seed-doc-container">
+                <h3>Your target document</h3>
+                <div id="seed-doc" class="col-md-12 col-xs-12 doc">
+                    <h4>{{title}}</h4>
+                    <!-- <p class="seed-clickable">{{content}}</p> -->
+                    <ul class="seed-clickable">
+                      {{#each sentences}}
+                        <li>{{this}}</li>
+                      {{/each}}
+                    </ul>
+                </div>
+              </div>
+              <div id="seed-summarize" class="col-md-8 col-xs-8">
+                <h3>Description</h3>
+                <div class="row">
+                  <div class="col-md-5 col-xs-5">
+                    <textarea rows="2" class="form-control doc-summarizer" id="docDescription-purpose" placeholder="What is the core thing the product is trying to do?"></textarea>
+                  </div>
+                  <div class="col-md-1 col-xs-1 connector">
+                    BY
+                  </div>
+                  <div class="col-md-5 col-xs-5">
+                    <textarea rows="2" class="form-control doc-summarizer" id="docDescription-mech" placeholder="How is it doing it?"></textarea>
+                  </div>
+                </div>
+                <h3>Pattern</h3>
+                <div class="row">
+                  <div class="col-md-5 col-xs-5">
+                    <textarea rows="2" class="form-control doc-summarizer" id="docPattern-purpose" placeholder="In abstract terms, what is the core thing the product is trying to do?"></textarea>
+                  </div>
+                  <div class="col-md-1 col-xs-1 connector">
+                    BY
+                  </div>
+                  <div class="col-md-5 col-xs-5">
+                    <textarea rows="2" class="form-control doc-summarizer" id="docPattern-mech" placeholder="In abstract terms, how is it doing it?"></textarea>
+                    <button class="btn btn-large btn-success scaffold-next-finish">Submit and go to Step 2</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br/>
+            <br/>
+            <!-- <div class="row scaffold-next-btn"> -->
+              <!--  -->
+            <!-- </div> -->
+        </div>
+    <!-- </div> -->
+</template>
