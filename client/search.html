@@ -3,7 +3,8 @@
     <div class="container search-container">
         <div class="row">
             <h1>Step 2: Find another product with the same pattern</h1>
-            <p>We are especially interested in other products that share the same pattern but are in a different product category/domain (e.g., kitchen VS office)</p>
+            <p>To receive credit for the HIT, please find at least one product that matches the same pattern as the target product. You may mark as many good matches as you wish.</p>
+            <p>NOTE: <b>We are especially interested in other products that share the same pattern but are in a different product category/domain (e.g., kitchen VS office).</b></p>
             <div class="col-md-4 col-xs-4 seed">
                 {{> SeedDocument}}
             </div>
@@ -70,14 +71,14 @@
 </template>
 
 <template name="Selections">
-    <h3>Best match</h3>
+    <h3>{{numMatches}} selected match(es)</h3>
     <div class="selection-controls">
           <!-- {{#if purposeSearch}}
             <textarea rows="2" class="form-control" id="matchDescription" placeholder="Describe the key purpose(s) shared by the target document and the best match"></textarea>
           {{else}}
             <textarea rows="2" class="form-control" id="matchDescription" placeholder="Describe the key mechanism(s) shared by the target document and the best match"></textarea>
           {{/if}} -->
-          <button class="btn btn-success submit-match disabled">Submit match</button>
+          <button class="btn btn-success submit-match disabled">Submit match(es)</button>
     </div>
     <div class='best-matches'>
           {{#each bestMatches}}
@@ -87,16 +88,16 @@
               <div class="doc-header" style="margin-bottom: 5px;">
                   <div class="btn-group" role="group">
                       <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status disabled">Not match</button>
-                      <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button>
-                      <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status disabled">Best match</button>
+                      <!-- <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button> -->
+                      <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status disabled">Match</button>
                   </div>
               </div>
               <div class="doc-content">
-                  This is an example of a best match for the seed document.
+                  This is an example of a match for the seed document.
               </div>
           </div>
     </div>
-    <h3>{{numPossible}} possible matches</h3>
+    <!-- <h3>{{numPossible}} possible matches</h3>
     <div class="selections">
 
         {{#each possibleMatches}}
@@ -116,7 +117,7 @@
             </div>
         </div>
 
-    </div>
+    </div> -->
 </template>
 
 <template name="Document">
@@ -126,17 +127,18 @@
                 <div class="btn-group" role="group">
                 {{#if isBestMatch}}
                     <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status">Not match</button>
-                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button>
-                    <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status">Best match</button>
-                {{else}} {{#if isPossibleMatch}}
+                    <!-- <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button> -->
+                    <button id="match-best-{{_id}}" class="btn btn-primary match-best match-status">Match</button>
+                {{else}}
+                <!-- {{#if isPossibleMatch}}
                             <button id="match-remove-{{_id}}" class="btn btn-secondary match-remove match-status">Not match</button>
                             <button id="match-add-{{_id}}" class="btn btn-primary match-add match-status">Possible match</button>
                             <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status">Best match</button>
-                         {{else}}
+                         {{else}} -->
                             <button id="match-remove-{{_id}}" class="btn btn-danger match-remove match-status">Not match</button>
-                            <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button>
-                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status">Best match</button>
-                        {{/if}}
+                            <!-- <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status">Possible match</button> -->
+                            <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status">Match</button>
+                        <!-- {{/if}} -->
                 {{/if}}
                 </div>
             </div>
@@ -184,8 +186,8 @@
             <div id="sample-doc-header" class="doc-header" style="margin-bottom: 5px;">
                 <div class="btn-group" role="group">
                     <button id="match-remove-{{_id}}" class="btn btn-danger match-remove match-status disabled">Not match</button>
-                    <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button>
-                    <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status disabled">Best match</button>
+                    <!-- <button id="match-add-{{_id}}" class="btn btn-secondary match-add match-status disabled">Possible match</button> -->
+                    <button id="match-best-{{_id}}" class="btn btn-secondary match-best match-status disabled">Match</button>
                 </div>
             </div>
             <div class="doc-content">

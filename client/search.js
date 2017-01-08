@@ -40,36 +40,36 @@ Template.AnalogySearcher.onRendered(function() {
       },
       {
         element: ".search-bar",
-        title: "Interface walkthrough (Step 2 of 7)",
+        title: "Interface walkthrough (Step 2 of 6)",
         content: "Use this search bar to enter keywords/phrases and search for possible analogous matches in our database of 8,348 other product descriptions.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: ".results",
-        title: "Interface walkthrough (Step 3 of 7)",
+        title: "Interface walkthrough (Step 3 of 6)",
         content: "Search results will show up here.",
         backdrop: true,
         placement: "bottom",
       },
       {
         element: "#sample-doc-header",
-        title: "Interface walkthrough (Step 4 of 7)",
-        content: "You can mark a document as a possible or best match by clicking on the relevant button. By default, all documents are not matches unless you say so.",
+        title: "Interface walkthrough (Step 4 of 6)",
+        content: "You can mark a document as a match by clicking on the relevant button. By default, all documents are not matches unless you say so.",
         backdrop: true,
         placement: "bottom",
       },
-      {
-        element: ".selections",
-        title: "Interface walkthrough (Step 5 of 7)",
-        content: "Possible matches show up here. You can promote them to best matches or remove them from your match list by clicking on either best match or not match.",
-        backdrop: true,
-        placement: "left",
-      },
+      // {
+      //   element: ".selections",
+      //   title: "Interface walkthrough (Step 5 of 7)",
+      //   content: "Possible matches show up here. You can promote them to best matches or remove them from your match list by clicking on either best match or not match.",
+      //   backdrop: true,
+      //   placement: "left",
+      // },
       {
         element: ".best-matches",
-        title: "Interface walkthrough (Step 6 of 7)",
-        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
+        title: "Interface walkthrough (Step 5 of 6)",
+        content: "Your currently selected matches will show up here. You can demote the document to not a match by clicking on the relevant button. To complete the HIT, <b>you must have at least one good match</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
         backdrop: true,
         placement: "left",
       },
@@ -91,8 +91,8 @@ Template.AnalogySearcher.onRendered(function() {
 
     walkthrough.addStep({
       element: ".change-seed",
-      title: "Interface walkthrough (Step 7 of 7)" + spacer,
-      content: "If you feel unable to find a good analogous match, you can get a new document by clicking on this button. That's it! Click \"begin\" when you're ready!",
+      title: "Interface walkthrough (Step 6 of 6)" + spacer,
+      content: "If you feel unable to find a good analogous match, you can get a new document by clicking on this button. You will return to the previous Step to begin the process for that document. That's it! Click \"begin\" when you're ready!",
         backdrop: true,
         placement: "bottom",
         template: "<div class='popover tour'>" +
@@ -581,26 +581,29 @@ Template.Selections.helpers({
         // return Session.get("bestMatches");
 
     },
-    possibleMatches: function() {
-        // return getPossible();
-        // return Session.get("possibleMatches");
-        var possibleMatches = [];
-        Session.get("possibleMatches").forEach(function(m) {
-          possibleMatches.push(m._id);
-        });
-        return Documents.find({_id: {$in: possibleMatches}});
-        // var user = Session.get("currentUser");
-        // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
-        // var matchingDocs = []
-        // docMatches.forEach(function(m) {
-        //     matchingDocs.push(m.matchDocID);
-        // });
-        // return Documents.find({_id: {$in: matchingDocs}});
+    numMatches: function() {
+      return Session.get("bestMatches").length;
     },
-    numPossible: function() {
-        return Session.get("possibleMatches").length;
-        // return getPossible().count();
-    },
+    // possibleMatches: function() {
+    //     // return getPossible();
+    //     // return Session.get("possibleMatches");
+    //     var possibleMatches = [];
+    //     Session.get("possibleMatches").forEach(function(m) {
+    //       possibleMatches.push(m._id);
+    //     });
+    //     return Documents.find({_id: {$in: possibleMatches}});
+    //     // var user = Session.get("currentUser");
+    //     // var docMatches = DocMatches.find({userID: user._id, seedDocID: Session.get("currentDoc")._id}).fetch();
+    //     // var matchingDocs = []
+    //     // docMatches.forEach(function(m) {
+    //     //     matchingDocs.push(m.matchDocID);
+    //     // });
+    //     // return Documents.find({_id: {$in: matchingDocs}});
+    // },
+    // numPossible: function() {
+    //     return Session.get("possibleMatches").length;
+    //     // return getPossible().count();
+    // },
     purposeSearch: function() {
       if (Session.equals("searchType", "p")) {
         return true;
@@ -617,19 +620,19 @@ Template.Selections.events({
         // console.log(bestMatches);
         // logger.trace("Best matches: " + JSON.stringify(bestMatches));
         if (bestMatches.length < 1) {
-            alert("You must select one best match; if you don't think there are any good matches, click \"change document\" to get another target document");
+            alert("You must select at least one good match; if you don't think there are any good matches, click \"change document\" to get another target document");
         // } else if (selections.length > 1) {
         //     alert("You must select only one best match");
         } else {
             // if ($("#matchDescription").val() == "") {
                 // alert("Please describe how the match and seed document are analogous.");
             // } else {
-                var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
+                var goodMatches = DocMatches.find({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
-                                                  matchDocID: bestMatches[0]._id,
+                                                  // matchDocID:  bestMatches[0]._id,
                                                   bestMatch: true
-                                                  });
-                logger.trace("Best match: " + JSON.stringify(bestMatch));
+                                                }).fetch();
+                logger.trace("Good matches: " + JSON.stringify(goodMatches));
                 var user = Session.get("currentUser");
                 var doc = Session.get("currentDoc");
                 // var summary = $("#matchDescription").val();
@@ -641,10 +644,12 @@ Template.Selections.events({
                 var completionCode = Random.hexString(20).toLowerCase();
 
                 // add metadata (completion code and summary) to best match
-                DocMatches.update({_id: bestMatch._id},{$set: {completionCode: completionCode, summary: pattern.content}})
+                goodMatches.forEach(function(match) {
+                  DocMatches.update({_id: match._id},{$set: {completionCode: completionCode, summary: pattern.content}})
+                });
 
                 // log the final submission
-                finalMatch = DocMatches.findOne({_id: bestMatch._id});
+                finalMatch = DocMatches.findOne({_id: goodMatches[0]._id});
                 logger.trace("Best match" + JSON.stringify(finalMatch));
                 EventLogger.logMatchSubmission(finalMatch, pattern.content);
 
@@ -730,17 +735,17 @@ Template.Document.events({
         logger.trace(this);
         // selectedDoc = this;
         var bestMatches = Session.get("bestMatches");
-        if (bestMatches.length > 0) {
-            var confirmMsg = "You can only have one best match at any given moment. If you continue, you will replace the current best match and relegate it to a possible match.";
-            if (confirm(confirmMsg)) {
-                // relegate current best match
-                MatchManager.possibleMatch(Session.get("currentDoc"), bestMatches[0]);
-                // create new best
-                MatchManager.bestMatch(Session.get("currentDoc"), this);
-            }
-        } else {
+        // if (bestMatches.length > 0) {
+        //     var confirmMsg = "You can only have one best match at any given moment. If you continue, you will replace the current best match and relegate it to a possible match.";
+        //     if (confirm(confirmMsg)) {
+        //         // relegate current best match
+        //         MatchManager.possibleMatch(Session.get("currentDoc"), bestMatches[0]);
+        //         // create new best
+        //         MatchManager.bestMatch(Session.get("currentDoc"), this);
+        //     }
+        // } else {
             MatchManager.bestMatch(Session.get("currentDoc"), this);
-        }
+        // }
         MatchManager.updateMatches(Session.get("currentUser"),
           Session.get("currentDoc"),
           Session.get("searchType")
