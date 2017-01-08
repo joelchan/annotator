@@ -18,6 +18,10 @@ Meteor.publish('singleDocByExtID', function(extID) {
   return Documents.find({extID: extID});
 });
 
+Meteor.publish('specificSummary', function(docID) {
+  return Summaries.find({docID: docID});
+});
+
 // Meteor.publish('sentences', function() {
 //   return Sentences.find();
 // });

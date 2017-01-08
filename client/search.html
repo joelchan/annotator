@@ -2,13 +2,15 @@
     <a href="" data-toggle="modal" data-target="#highlightDocs" style="display:none;" data-backdrop="static" class="highlightDocButton"></a>
     <div class="container search-container">
         <div class="row">
+            <h1>Step 2: Find another product with the same pattern</h1>
+            <p>We are especially interested in other products that share the same pattern but are in a different product category/domain (e.g., kitchen VS office)</p>
             <div class="col-md-4 col-xs-4 seed">
                 {{> SeedDocument}}
             </div>
             <div class="col-md-4 col-xs-4">
                 <div class="row search-bar">
                     {{> SearchBar}}
-                    {{> SearchHelp}}
+                    <!-- {{> SearchHelp}} -->
                 </div>
                 <div class="row results">
                     {{> SearchResults}}
@@ -25,6 +27,10 @@
 <template name="SeedDocument">
     <h3>Target document</h3>
     <button class="btn btn-danger change-seed disabled" style="margin-bottom:10px;">No good matches. Give me a new document.</button>
+    <div id="seed-doc-summary" class="doc-summary">
+      <!-- <p><label>Description: </label> {{descPurpose}} <b>BY</b> {{descMech}}</p> -->
+      <p><b>Pattern: </b> {{patternPurpose}} <b>BY</b> {{patternMech}}</p>
+    </div>
     <div id="seed-doc" class="col-md-12 col-xs-12 doc">
         <h4>{{title}}</h4>
         <!-- <p class="seed-clickable">{{content}}</p> -->
@@ -45,7 +51,8 @@
 
 <template name="SearchBar">
     <div class="search-bar">
-        <h3>Search for matches <span class="search-help">(<a href="" data-toggle="modal" data-target="#searchHelp">Need help?</a>)</span></h3>
+        <h3>Search for matches</h3>
+        <!-- <h3>Search for matches <span class="search-help">(<a href="" data-toggle="modal" data-target="#searchHelp">Need help?</a>)</span></h3> -->
         <div class="input-group input-group-sm idea-search">
           <span class="input-group-btn">
             <button class="btn btn-default search-apply-btn disabled" type="buttonmargin-left:20%">
@@ -65,11 +72,11 @@
 <template name="Selections">
     <h3>Best match</h3>
     <div class="selection-controls">
-          {{#if purposeSearch}}
+          <!-- {{#if purposeSearch}}
             <textarea rows="2" class="form-control" id="matchDescription" placeholder="Describe the key purpose(s) shared by the target document and the best match"></textarea>
           {{else}}
             <textarea rows="2" class="form-control" id="matchDescription" placeholder="Describe the key mechanism(s) shared by the target document and the best match"></textarea>
-          {{/if}}
+          {{/if}} -->
           <button class="btn btn-success submit-match disabled">Submit match</button>
     </div>
     <div class='best-matches'>

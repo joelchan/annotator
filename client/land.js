@@ -37,6 +37,7 @@ Template.land.events({
                   Router.go("SearchScaffold", {userID: userID,
                                                    docID: doc._id,
                                                    searchType: searchType});
+                  EventLogger.logBeginInstructions();
               });
             }
         }

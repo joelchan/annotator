@@ -69,7 +69,7 @@ Template.AnalogySearcher.onRendered(function() {
       {
         element: ".best-matches",
         title: "Interface walkthrough (Step 6 of 7)",
-        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match, and a description of how it is analogous to the seed document</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
+        content: "Your currently selected best match will show up here. <b>You can only have one best match at any given time</b>. Just like before, you can demote the document to not a match or a possible match. To complete the HIT, <b>you must have one best match</b>. Once you're done, click submit, and you'll get your completion code on the next screen.",
         backdrop: true,
         placement: "left",
       },
@@ -135,6 +135,24 @@ Template.SeedDocument.helpers({
         // return Sentences.find({docID: Session.get("currentDoc")._id},
         //                         {sort: {psn: 1}});
         return Session.get("currentDoc").sentences;
+    },
+    // descPurpose: function() {
+    //
+    // },
+    // descMech: function() {
+    //
+    // },
+    patternPurpose: function() {
+      var pattern = Summaries.findOne({docID: Session.get("currentDoc")._id,
+                                      userID: Session.get("currentUser")._id,
+                                      sumType: "pattern"});
+      return pattern.content.split(" [BY] ")[0];
+    },
+    patternMech: function() {
+      var pattern = Summaries.findOne({docID: Session.get("currentDoc")._id,
+                                      userID: Session.get("currentUser")._id,
+                                      sumType: "pattern"});
+      return pattern.content.split(" [BY] ")[1];
     },
     searches: function() {
         var allSearches = Searches.find(
@@ -222,8 +240,8 @@ Template.SeedDocument.events({
               logger.trace("Sampled new document: " + JSON.stringify(newDoc));
               EventLogger.logNewSeed(currentDoc, newDoc);
               Session.set("currentDoc", newDoc);
-              logger.debug("Refreshing page with new doc");
-              Router.go("Search", {userID: user._id,
+              // logger.debug("Refreshing page with new doc");
+              Router.go("SearchScaffold", {userID: user._id,
                                    docID: newDoc._id,
                                    searchType: Session.get("searchType")
                                   });
@@ -603,9 +621,9 @@ Template.Selections.events({
         // } else if (selections.length > 1) {
         //     alert("You must select only one best match");
         } else {
-            if ($("#matchDescription").val() == "") {
-                alert("Please describe how the match and seed document are analogous.");
-            } else {
+            // if ($("#matchDescription").val() == "") {
+                // alert("Please describe how the match and seed document are analogous.");
+            // } else {
                 var bestMatch = DocMatches.findOne({userID: Session.get("currentUser")._id,
                                                   seedDocID: Session.get("currentDoc")._id,
                                                   matchDocID: bestMatches[0]._id,
@@ -614,18 +632,21 @@ Template.Selections.events({
                 logger.trace("Best match: " + JSON.stringify(bestMatch));
                 var user = Session.get("currentUser");
                 var doc = Session.get("currentDoc");
-                var summary = $("#matchDescription").val();
+                // var summary = $("#matchDescription").val();
+                var pattern = Summaries.findOne({docID: Session.get("currentDoc")._id,
+                                                userID: Session.get("currentUser")._id,
+                                                sumType: "pattern"});
 
                 // generate completion code
                 var completionCode = Random.hexString(20).toLowerCase();
 
                 // add metadata (completion code and summary) to best match
-                DocMatches.update({_id: bestMatch._id},{$set: {completionCode: completionCode, summary: summary}})
+                DocMatches.update({_id: bestMatch._id},{$set: {completionCode: completionCode, summary: pattern.content}})
 
                 // log the final submission
                 finalMatch = DocMatches.findOne({_id: bestMatch._id});
                 logger.trace("Best match" + JSON.stringify(finalMatch));
-                EventLogger.logMatchSubmission(finalMatch, summary);
+                EventLogger.logMatchSubmission(finalMatch, pattern.content);
 
                 // remember that this user has already seen this doc
                 DocumentManager.markAnnotatedBy(doc, user);
@@ -637,7 +658,7 @@ Template.Selections.events({
                 Router.go("Finish", {matchID: finalMatch._id});
 
                 // $('.highlightDocButton').click();
-            }
+            // }
         }
     }
 });
