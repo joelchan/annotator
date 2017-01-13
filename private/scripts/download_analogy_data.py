@@ -7,8 +7,12 @@ import datetime
 from mongohq import *
 from db_params import *
 
-def process_events(data_path, outname):
+def process_events(data_path, outname, cutoff=None):
     events = pd.read_json(os.path.join(data_dir, "events.json"))
+
+    # print events[events['description'] == scaffold_start].head()
+
+    # print "%i times we began instructions" %(events[events['description'] == scaffold_start].count())
 
     f = open("%s_events.txt" %outname, 'w')
     toWrite = ""
@@ -19,11 +23,23 @@ def process_events(data_path, outname):
 
     for userName, eventData in events.groupby("userName"):
 
-        if "User submitted match for doc" in eventData['description'].values:
+        # print eventData['description']
+        if "User submitted match for doc" in eventData['description'].values and scaffold_start in eventData['description'].values:
+
+            # print "Submitted match!"
+
+            # if cutoff is not None:
+                # eventData = eventData[eventData['time'] >= cutoff]
+
+            # print "%i events for %s" %(len(eventData['time']), userName)
 
             eventData.sort_values(by=['time'], ascending=[1], inplace=True)
             start = datetime.datetime.fromtimestamp(eventData['time'].values[0]/1000)
+            beginInstructions = datetime.datetime.fromtimestamp(eventData[eventData['description'] == scaffold_start]['time'].values[0]/1000)
+            beginSearch = datetime.datetime.fromtimestamp(eventData[eventData['description'] == search_start]['time'].values[0]/1000)
             stop = datetime.datetime.fromtimestamp(eventData['time'].values[-1]/1000)
+            duration_scaffold = beginInstructions-start
+            duration_search = stop-beginSearch
             duration = stop-start
             userWrite = ""
 
@@ -49,7 +65,9 @@ def process_events(data_path, outname):
             userHeader += "%s\n" %smallDiv
             toWrite += "%s%s\n" %(userHeader, userWrite)
             userData = {'userName': userName,
-                        'duration (mins)': duration.total_seconds()/60.0,
+                        'duration': duration.total_seconds()/60.0,
+                        'duration scaffold (mins)': duration_scaffold.total_seconds()/60.0,
+                        'duration search (mins)': duration_search.total_seconds()/60.0,
                         'numDocs': len(eventData[eventData['description'] == "User submitted match for doc"]),
                         'numTags': numTags,
                         'numQueries': numQueries}
@@ -68,11 +86,15 @@ def process_events(data_path, outname):
 Download latest data
 """
 
-runName = sys.argv[1]
+db_name = sys.argv[1]
+runName = sys.argv[2]
+cutoff = None
+if len(sys.argv) > 3:
+    cutoff = int(sys.argv[3])
 data_dir = "data/%s" %runName
 output_dir = "/Users/jchan/Dropbox/Research/PostDoc/CrowdSchemas/analogySearch/"
 
-db_params = Data_Utility.get_db("nosummary")
+db_params = Data_Utility.get_db(db_name)
 db = Data_Utility(data_dir, db_params)
 db.dump_db()
 
@@ -108,7 +130,7 @@ pickings = pd.DataFrame(pickings)
 
 # pickings['target'] = [1 for t in pickings['docID'] if t in target_seeds['docID']]
 pickings = pickings.merge(target_seeds, on="docExtID", how="left")
-print pickings[pickings['target'] == 1].sort_values(by=['numMatches'], ascending=[0])
+# print pickings[pickings['target'] == 1].sort_values(by=['numMatches'], ascending=[0])
 
 pickings.to_csv(os.path.join(output_dir, "%s_pickings.csv" %runName))
 
@@ -124,4 +146,7 @@ doc_tagging_events = [
  u'User tagged doc as best match',
  u'User tagged doc as possible match']
 
-events = process_events(data_dir, os.path.join(output_dir, runName))
+scaffold_start = "User began instructions"
+search_start = "User began working on a document"
+
+events = process_events(data_dir, os.path.join(output_dir, runName), cutoff)

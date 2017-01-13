@@ -28,6 +28,7 @@ Template.land.events({
                 Router.go("SearchScaffold", {userID: userID,
                                                 docID: newDoc._id,
                                                 searchType: "p"});
+                EventLogger.logBeginScaffold(newDoc._id);
               });
             } else {
               var docDataArr = docData.trim().split("-");
@@ -37,7 +38,7 @@ Template.land.events({
                   Router.go("SearchScaffold", {userID: userID,
                                                    docID: doc._id,
                                                    searchType: searchType});
-                  EventLogger.logBeginInstructions();
+                  EventLogger.logBeginScaffold(doc._id);
               });
             }
         }

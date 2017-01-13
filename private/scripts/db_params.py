@@ -20,6 +20,13 @@ nosummary = {'url': "ds155028.mlab.com",
                'pswd': 'chan',
                }
 
+relax = {'url': "ds157278.mlab.com",
+               'port': 57278,
+               'dbName': 'heroku_4z532bxd',
+               'user': 'joel',
+               'pswd': 'chan',
+               }
+
 # Info for connecting to a local instance of meteor's mongo.
 # Meteor must be running to connect
 local_meteor = {'url': "localhost",
@@ -31,5 +38,6 @@ local_meteor = {'url': "localhost",
 
 ALL_DBs = {'local': local_meteor,
             'annotator': annotator,
-            'nosummary': nosummary
+            'nosummary': nosummary,
+            'relax': relax,
           }

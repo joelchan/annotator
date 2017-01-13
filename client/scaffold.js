@@ -18,6 +18,25 @@ Template.Scaffold.helpers({
 });
 
 Template.Scaffold.events({
+  'click .change-seed': function() {
+      var confirmMsg = "Are you sure? You will clear all you work so far and move to a new document."
+      // var selections = getSelections().fetch();
+      var currentDoc = Session.get("currentDoc");
+      if (confirm(confirmMsg)) {
+          var user = Session.get("currentUser");
+          Meteor.call("getNewDoc", user, currentDoc, function(err, newDoc) {
+            logger.trace("Sampled new document: " + JSON.stringify(newDoc));
+            EventLogger.logNewSeed(currentDoc, newDoc);
+            Session.set("currentDoc", newDoc);
+            // logger.debug("Refreshing page with new doc");
+            Router.go("SearchScaffold", {userID: user._id,
+                                 docID: newDoc._id,
+                                 searchType: Session.get("searchType")
+                                });
+            EventLogger.logBeginScaffold(newDoc._id);                    
+          });
+      }
+  },
   'click .scaffold-next-finish': function() {
     var descPurpose = $('#docDescription-purpose').val();
     var descMech = $('#docDescription-mech').val();
@@ -35,6 +54,7 @@ Template.Scaffold.events({
       Router.go("Search", {userID: Session.get("currentUser")._id,
                            docID: doc._id,
                            searchType: Session.get("searchType")});
+      EventLogger.logEndScaffold(doc._id);
     }
   }
 });

@@ -1,0 +1,30 @@
+<template name="Explorer">
+  <div class="container">
+    <div class="row">
+      <div class="search-bar">
+          <h3>Search for matches</h3>
+          <!-- <h3>Search for matches <span class="search-help">(<a href="" data-toggle="modal" data-target="#searchHelp">Need help?</a>)</span></h3> -->
+          <div class="input-group input-group-sm idea-search">
+            <span class="input-group-btn">
+              <button class="btn btn-default search-apply-btn" type="buttonmargin-left:20%">
+                  <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </span>
+            <input type="text" id="search-query" class="form-control" placeholder="Enter keywords to search for matches...">
+            <span class="input-group-btn">
+              <button class="btn btn-default search-remove-btn" type="button">
+                  <i class="glyphicon glyphicon-remove"></i>
+              </button>
+            </span>
+          </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="search-results">
+        {{#each matchingDocs}}
+            {{> Document}}
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</template>
