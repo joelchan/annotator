@@ -18,6 +18,14 @@
     background-color: rgb(194, 240, 194);
 }
 
+.key-finding {
+    background-color: #66b3ff;
+}
+
+.key-background {
+    background-color: #ffff99;
+}
+
 .key-neutral {
     background-color: white;
 }
@@ -31,7 +39,7 @@
     -webkit-touch-callout: none;
     /* iOS Safari */
     -webkit-user-select: none;
-    /* Chrome/Safari/Opera */ 
+    /* Chrome/Safari/Opera */
     -khtml-user-select: none;
     /* Konqueror */
     -moz-user-select: none;

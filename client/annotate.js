@@ -42,6 +42,10 @@ Template.annotateTask.events({
         Session.set("highlightState", "purpose");
       } else if (isInList("mechanism", button.classList)) {
         Session.set("highlightState", "mechanism");
+      } else if (isInList("finding", button.classList)) {
+        Session.set("highlightState", "finding");
+      } else if (isInList("background", button.classList)) {
+        Session.set("highlightState", "background");
       } else if (isInList("unmark", button.classList)) {
         Session.set("highlightState", "unmark");
       } else {
@@ -118,6 +122,21 @@ Template.sentence.helpers({
 });
 
 Template.word.helpers({
+    keyType: function() {
+      var userID = Session.get("currentUser")._id;
+      if (isInList(userID, this.highlightsPurpose)) {
+          // logger.debug("isPurpose is true");
+          return "key-purpose";
+      } else if (isInList(userID, this.highlightsMechanism)) {
+          return "key-mechanism"
+      } else if (isInList(userID, this.highlightsFindings)) {
+          return "key-finding"
+      } else if (isInList(userID, this.highlightsBackground)) {
+          return "key-background"
+      } else {
+        return "key-neutral"
+      }
+    },
     isPurpose: function() {
         var userID = Session.get("currentUser")._id;
         // logger.debug("Current user is " + userID);
@@ -136,6 +155,30 @@ Template.word.helpers({
         // logger.trace("Users who have higlighted this as a mechanism keyword: " +
             // JSON.stringify(this.highlightsMechanism));
         if (isInList(userID, this.highlightsMechanism)) {
+            // logger.debug("isMech is true");
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isFinding: function() {
+        var userID = Session.get("currentUser")._id;
+        // logger.debug("Current user is " + userID);
+        // logger.trace("Users who have higlighted this as a mechanism keyword: " +
+            // JSON.stringify(this.highlightsMechanism));
+        if (isInList(userID, this.highlightsFindings)) {
+            // logger.debug("isMech is true");
+            return true;
+        } else {
+            return false;
+        }
+    },
+    isBackground: function() {
+        var userID = Session.get("currentUser")._id;
+        // logger.debug("Current user is " + userID);
+        // logger.trace("Users who have higlighted this as a mechanism keyword: " +
+            // JSON.stringify(this.highlightsMechanism));
+        if (isInList(userID, this.highlightsBackground)) {
             // logger.debug("isMech is true");
             return true;
         } else {
@@ -252,10 +295,15 @@ markWord = function(wordID) {
   var userID = Session.get("currentUser")._id;
   logger.trace(userID + " clicked on " + wordID);
   var highlightType = Session.get("highlightState");
+  logger.trace("highlightState: " + highlightType);
   if (highlightType === "purpose") {
       WordManager.markWord(wordID, userID, "Purpose");
   } else if (highlightType === "mechanism") {
       WordManager.markWord(wordID, userID, "Mechanism");
+  } else if (highlightType === "finding") {
+      WordManager.markWord(wordID, userID, "Finding");
+  } else if (highlightType === "background") {
+      WordManager.markWord(wordID, userID, "Background");
   } else {
       WordManager.markWord(wordID, userID, "Neither");
   }

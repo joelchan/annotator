@@ -27,8 +27,10 @@
     </div>
     <div class="divider">
       <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default background init-highlight">Highlight background</button>
         <button type="button" class="btn btn-default purpose init-highlight">Highlight purpose</button>
         <button type="button" class="btn btn-default mechanism init-highlight">Highlight mechanism</button>
+        <button type="button" class="btn btn-default finding init-highlight">Highlight finding</button>
         <button type="button" class="btn btn-default unmark init-highlight">Remove highlights</button>
         <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button>
       </div>
@@ -66,7 +68,10 @@
 <template name="word">
     <!-- Single button -->
     <!-- <div class="btn-group token-container"> -->
-      {{#if isPurpose}}
+    <span class="token {{keyType}}" id="word-{{_id}}">
+      {{content}}
+    </span>
+      <!-- {{#if isPurpose}}
         <span class="token key-purpose" id="word-{{_id}}">
           {{content}}
         </span>
@@ -78,11 +83,23 @@
         </span>
       {{/if}}
 
+      {{#if isFinding}}
+        <span class="token key-finding" id="word-{{_id}}">
+          {{content}}
+        </span>
+      {{/if}}
+
+      {{#if isBackground}}
+        <span class="token key-background" id="word-{{_id}}">
+          {{content}}
+        </span>
+      {{/if}}
+
       {{#if isNeutral}}
         <span class="token key-neutral" id="word-{{_id}}">
           {{content}}
         </span>
-      {{/if}}
+      {{/if}} -->
 
     <!-- </div> -->
 </template>

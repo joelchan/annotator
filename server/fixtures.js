@@ -34,7 +34,7 @@ if (Documents.find().count() == 0) {
   //   console.log("Creating document " + i);
   //   DocumentManager.createDocument(quirkyDocs[i]);
   // }
-  
+
   // var desiredNum = 5;
   // // var desiredNum = quirkyDocs.length;
   // logger.debug("Documents empty, inserting first " + desiredNum + " docs from Quirky data");
@@ -43,7 +43,8 @@ if (Documents.find().count() == 0) {
   //   DocumentManager.createDocument(doc);
   // });
 
-  quirkyDocs.forEach(function(doc) {
+  // quirkyDocs.forEach(function(doc) {
+  kcDocs.forEach(function(doc) {
     if (doc.sample == 1) {
       DocumentManager.createDocument(doc);
     }
