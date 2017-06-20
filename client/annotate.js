@@ -103,16 +103,20 @@ Template.annotateTask.events({
                                         "Mechanism",
                                         sumMechanism,
                                         user);
-            DocumentManager.addSummary(
-              doc,
-              "Highlights",
-              Words.find({docID: doc._id}).fetch(),
-              user
-            );
-            DocumentManager.markAnnotatedBy(doc,
-                                          user);
-            EventLogger.logFinishDocument(doc._id);
-            Router.go("Finish");
+            Meteor.call("writeSummary", doc, "Highlights", Words.find({docID: doc._id}).fetch(), user, function(err, res) {
+              if (res) {
+                DocumentManager.markAnnotatedBy(doc,
+                                              user);
+                EventLogger.logFinishDocument(doc._id);
+                Router.go("Finish");
+              }
+            })
+            // DocumentManager.addSummary(
+            //   doc,
+            //   "Highlights",
+            //   Words.find({docID: doc._id}).fetch(),
+            //   user
+            // );
         }
         // Router.go("Finish");
     },
