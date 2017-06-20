@@ -22,7 +22,7 @@ Template.annotationPage.helpers({
         } else {
             return false;
         }
-    }
+    },
 });
 
 Template.annotateTask.helpers({
@@ -30,6 +30,10 @@ Template.annotateTask.helpers({
         logger.debug("Getting sentences...");
         return Sentences.find({docID: Session.get("currentDoc")._id},
                                 {sort: {psn: 1}});
+    },
+    numAnnotations: function() {
+      var doc = Documents.findOne(Session.get("currentDoc")._id);
+      return doc.annotatedBy.length;
     }
 });
 
@@ -66,11 +70,12 @@ Template.annotateTask.events({
         var sumMechanism = $('#summ-mech').val();
         logger.trace("Purpose summary: " + sumPurpose);
         logger.trace("Mechanism summary: " + sumMechanism);
-        if (sumPurpose === "" || sumMechanism === "") {
-            var hasSummary = false;
-        } else {
-            var hasSummary = true;
-        }
+        hasSummary = true;
+        // if (sumPurpose === "" || sumMechanism === "") {
+        //     var hasSummary = false;
+        // } else {
+        //     var hasSummary = true;
+        // }
 
         // check if annotated
         if (DocumentManager.isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {

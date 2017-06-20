@@ -45,9 +45,9 @@ if (Documents.find().count() == 0) {
 
   // quirkyDocs.forEach(function(doc) {
   kcDocs.forEach(function(doc) {
-    if (doc.sample == 1) {
+    // if (doc.sample == 1) {
       DocumentManager.createDocument(doc);
-    }
+    // }
   });
 
   // index for hopefully faster performance!
