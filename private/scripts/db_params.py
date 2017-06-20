@@ -20,6 +20,13 @@ annotator = {'url': "ds045242.mongolab.com",
                'pswd': mongolab['pswd'],
                }
 
+kc_authors = {'url': "ds149069.mlab.com",
+               'port': 49069,
+               'dbName': 'heroku_jpqmxq3r',
+               'user': "kitturlab",
+               'pswd': "kitturlab",
+               }
+
 # Info for connecting to a local instance of meteor's mongo.
 # Meteor must be running to connect
 local_meteor = {'url': "localhost",
@@ -32,5 +39,5 @@ local_meteor = {'url': "localhost",
 ALL_DBs = {'local': local_meteor,
             'fac_exp': fac_exp,
             'annotator': annotator,
+            'kc_authors': kc_authors
           }
-

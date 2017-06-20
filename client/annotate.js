@@ -103,6 +103,12 @@ Template.annotateTask.events({
                                         "Mechanism",
                                         sumMechanism,
                                         user);
+            DocumentManager.addSummary(
+              doc,
+              "Highlights",
+              Words.find({docID: doc._id}).fetch(),
+              user
+            );
             DocumentManager.markAnnotatedBy(doc,
                                           user);
             EventLogger.logFinishDocument(doc._id);
