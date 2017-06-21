@@ -65,6 +65,9 @@ Template.annotateTask.events({
         Session.set("currentDoc", doc);
     },
     'click .finished': function() {
+
+        var $this = $(this);
+        $this.button('loading');
         // grab and check summary data
         var sumPurpose = $('#summ-purp').val();
         var sumMechanism = $('#summ-mech').val();
@@ -105,6 +108,7 @@ Template.annotateTask.events({
                                         user);
             Meteor.call("writeSummary", doc, "Highlights", Words.find({docID: doc._id}).fetch(), user, function(err, res) {
               if (res) {
+                $this.button('reset');
                 alert("Finished! Going to last page next")                
                 DocumentManager.markAnnotatedBy(doc,
                                             user);
