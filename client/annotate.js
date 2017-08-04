@@ -5,13 +5,26 @@ Logger.setLevel('Client:annotate', 'trace');
 // Logger.setLevel('Client:annotate', 'info');
 // Logger.setLevel('Client:annotate', 'warn');
 
+LocalWords = new Mongo.Collection(null);
+
 // var currentStart = {'s': 0, 'w': 0};
 var currentStart = 0;
 // var currentEnd = {'s': 0, 'w': 0};
 var currentEnd = 0;
 
+Template.annotationPage.onCreated(function() {
+  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
+  //   logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //   LocalWords.insert(word);
+  // });
+  // logger.trace("Local words: ");
+  // logger.trace(LocalWords.find().fetch());
+});
+
 Template.annotationPage.rendered = function(){
+    logger.debug("Rendered annotation page...");
     Session.set("highlightState", "none");
+
 }
 
 Template.annotationPage.helpers({
@@ -24,6 +37,32 @@ Template.annotationPage.helpers({
         }
     },
 });
+
+Template.annotateTask.onCreated(function() {
+  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
+  //   // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //   LocalWords.insert(word);
+  // });
+  // logger.trace("Local words: ");
+  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
+});
+
+Template.annotateTask.rendered = function(){
+  var doc = Session.get("currentDoc");
+  logger.trace("Current doc: " + JSON.stringify(doc));
+  var dbWords = Words.find({docID: doc._id}).fetch();
+  logger.trace("dbWords: " + JSON.stringify(dbWords));
+  if (LocalWords.find().count() < 1) {
+    dbWords.forEach(function(word) {
+      // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+      LocalWords.insert(word);
+    });
+  }
+  logger.trace("Local words: ");
+  logger.trace(JSON.stringify(LocalWords.find().fetch()));
+  logger.debug("Rendered annotation task...");
+}
+
 
 Template.annotateTask.helpers({
     sentences: function() {
@@ -81,7 +120,7 @@ Template.annotateTask.events({
         // }
 
         // check if annotated
-        if (DocumentManager.isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
+        if (isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
             var hasAnnotations = true;
         } else {
             var hasAnnotations = false;
@@ -89,11 +128,11 @@ Template.annotateTask.events({
 
         // only continue if we have all the data!
         if (!hasSummary && !hasAnnotations) {
-            alert("Please summarize and annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
+            alert("Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
         } else if (!hasSummary && hasAnnotations) {
             alert("Please summarize the document!");
         } else if (hasSummary && !hasAnnotations) {
-            alert("Please annotate the document! Remember: we would like at least one purpose keyword and one mechanism keyword.");
+            alert("Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
         } else {
             // grab the summary data and push to finish
             var user = Session.get("currentUser");
@@ -106,10 +145,10 @@ Template.annotateTask.events({
                                         "Mechanism",
                                         sumMechanism,
                                         user);
-            Meteor.call("writeSummary", doc, "Highlights", Words.find({docID: doc._id}).fetch(), user, function(err, res) {
+            Meteor.call("writeSummary", doc, "Highlights", LocalWords.find({docID: doc._id}).fetch(), user, function(err, res) {
               if (res) {
                 $this.button('reset');
-                alert("Finished! Going to last page next")                
+                alert("Finished! Going to last page next")
                 DocumentManager.markAnnotatedBy(doc,
                                             user);
                 EventLogger.logFinishDocument(doc._id);
@@ -137,13 +176,30 @@ Template.annotateTask.events({
     }
 })
 
+Template.sentence.rendered = function(){
+  logger.debug("Rendered sentence...");
+}
+
+Template.sentence.onCreated(function() {
+  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
+  //   // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //   LocalWords.insert(word);
+  // });
+  // logger.trace("Local words: ");
+  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
+});
+
 Template.sentence.helpers({
     words: function() {
         logger.debug("Getting words...");
-        return Words.find({sentenceID: this._id},
+        return LocalWords.find({sentenceID: this._id},
                             {sort: { sequence : 1 }});
     }
 });
+
+Template.word.rendered = function(){
+  logger.debug("Rendered word...");
+}
 
 Template.word.helpers({
     keyType: function() {
@@ -230,7 +286,7 @@ Template.word.events({
           logger.trace(word.innerHTML);
           var wordID = trimFromString(word.id, "word-");
           // currentStart.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
-          currentStart = Words.findOne(wordID).globalPsn;
+          currentStart = LocalWords.findOne(wordID).globalPsn;
           markWord(wordID);
       }
     },
@@ -248,11 +304,11 @@ Template.word.events({
         var wordID = trimFromString(word.id, "word-");
         // currentEnd.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
         // currentEnd.w = Words.findOne(wordID).sequence;
-        currentEnd = Words.findOne(wordID).globalPsn;
+        currentEnd = LocalWords.findOne(wordID).globalPsn;
         logger.trace("Current start: " + currentStart);
         logger.trace("Current end: " + currentEnd);
 
-        var selectedWords = Words.find({docID: Session.get("currentDoc")._id,
+        var selectedWords = LocalWords.find({docID: Session.get("currentDoc")._id,
                                         globalPsn: {$gte: currentStart,
                                                     $lte: currentEnd}
                                         }).fetch();
@@ -296,43 +352,120 @@ Template.word.events({
       }
     },
 
-    'click .key-option': function(event) {
-        var selection = event.currentTarget;
-        // var keyType = selection.innerText;
-        // console.log(selection);
-        var word = selection.parentNode.previousElementSibling;
-        // console.log(word);
-        var wordID = trimFromString(word.id, "word-");
-        var userID = Session.get("currentUser")._id;
-        logger.trace(userID + " clicked on " + wordID);
-        if (selection.classList.contains("purp")) {
-            WordManager.markWord(wordID, userID, "Purpose");
-        } else if (selection.classList.contains("mech")) {
-            WordManager.markWord(wordID, userID, "Mechanism");
-        } else {
-            WordManager.markWord(wordID, userID, "Neither");
-        }
-    }
+//     'click .key-option': function(event) {
+//         var selection = event.currentTarget;
+//         // var keyType = selection.innerText;
+//         // console.log(selection);
+//         var word = selection.parentNode.previousElementSibling;
+//         // console.log(word);
+//         var wordID = trimFromString(word.id, "word-");
+//         var userID = Session.get("currentUser")._id;
+//         logger.trace(userID + " clicked on " + wordID);
+//         if (selection.classList.contains("purp")) {
+//             WordManager.markWord(wordID, userID, "Purpose");
+//         } else if (selection.classList.contains("mech")) {
+//             WordManager.markWord(wordID, userID, "Mechanism");
+//         } else {
+//             WordManager.markWord(wordID, userID, "Neither");
+//         }
+//     }
 })
 
+// markWord = function(wordID) {
+//   var userID = Session.get("currentUser")._id;
+//   logger.trace(userID + " clicked on " + wordID);
+//   var highlightType = Session.get("highlightState");
+//   logger.trace("highlightState: " + highlightType);
+//   if (highlightType === "purpose") {
+//       WordManager.markWord(wordID, userID, "Purpose");
+//   } else if (highlightType === "mechanism") {
+//       WordManager.markWord(wordID, userID, "Mechanism");
+//   } else if (highlightType === "finding") {
+//       WordManager.markWord(wordID, userID, "Finding");
+//   } else if (highlightType === "background") {
+//       WordManager.markWord(wordID, userID, "Background");
+//   } else {
+//       WordManager.markWord(wordID, userID, "Neither");
+//   }
+// }
+
 markWord = function(wordID) {
-  var userID = Session.get("currentUser")._id;
-  logger.trace(userID + " clicked on " + wordID);
-  var highlightType = Session.get("highlightState");
-  logger.trace("highlightState: " + highlightType);
-  if (highlightType === "purpose") {
-      WordManager.markWord(wordID, userID, "Purpose");
-  } else if (highlightType === "mechanism") {
-      WordManager.markWord(wordID, userID, "Mechanism");
-  } else if (highlightType === "finding") {
-      WordManager.markWord(wordID, userID, "Finding");
-  } else if (highlightType === "background") {
-      WordManager.markWord(wordID, userID, "Background");
-  } else {
-      WordManager.markWord(wordID, userID, "Neither");
-  }
+    /******************************************************************
+     * Mark the word with appropriate annotation for that user
+     * @params
+     *    wordID - the id of the word being annotated
+     *    userID - the user making the annotation
+     *    type (str) - problem, mechanism, or neither
+     *****************************************************************/
+    // var previousState = this.getCurrentState(wordID, userID);
+    var userID = Session.get("currentUser")._id;
+    logger.trace(userID + " clicked on " + wordID);
+    var highlightType = Session.get("highlightState");
+    logger.trace("highlightState: " + highlightType);
+    if (highlightType === "purpose") {
+        logger.debug("Adding " + userID + " to highlightsPurpose for " + wordID);
+        LocalWords.update({_id: wordID},{$addToSet: {highlightsPurpose: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsMechanism: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsFindings: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsBackground: userID}});
+        // EventLogger.logMarkPurpose(wordID, previousState);
+    } else if (highlightType === "mechanism") {
+        logger.debug("Adding " + userID + " to highlightsMechanism for " + wordID);
+        LocalWords.update({_id: wordID},{$pull: {highlightsPurpose: userID}});
+        LocalWords.update({_id: wordID},{$addToSet: {highlightsMechanism: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsFindings: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsBackground: userID}});
+        // EventLogger.logMarkMechanism(wordID, previousState);
+    } else if (highlightType === "finding"){
+        logger.debug("Adding " + userID + " to highlightsFinding for " + wordID);
+        LocalWords.update({_id: wordID},{$pull: {highlightsPurpose: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsMechanism: userID}});
+        LocalWords.update({_id: wordID},{$addToSet: {highlightsFindings: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsBackground: userID}});
+        // EventLogger.logMarkFinding(wordID, previousState);
+    } else if (highlightType === "background"){
+        logger.debug("Adding " + userID + " to highlightsBackground for " + wordID);
+        LocalWords.update({_id: wordID},{$pull: {highlightsPurpose: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsMechanism: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsFindings: userID}});
+        LocalWords.update({_id: wordID},{$addToSet: {highlightsBackground: userID}});
+        // EventLogger.logMarkBackground(wordID, previousState);
+    } else {
+        logger.debug("Neither: un-annotating");
+        LocalWords.update({_id: wordID},{$pull: {highlightsPurpose: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsMechanism: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsFindings: userID}});
+        LocalWords.update({_id: wordID},{$pull: {highlightsBackground: userID}});
+        // EventLogger.logUnmarkWord(wordID, previousState);
+    }
+    return true;
 }
 
-unMarkWord = function(wordID) {
-  WordManager.markWord(wordID, userID, "Neither");
+isAnnotatedBy = function(doc, user) {
+    var docWords = LocalWords.find({docID: doc._id}).fetch();
+
+    var hasPurpose = false;
+    var hasMechanism = false;
+    var hasFinding = false;
+    var hasBackground = false;
+    docWords.forEach(function(docWord) {
+        if (isInList(user._id, docWord.highlightsPurpose)) {
+            hasPurpose = true;
+        }
+        if (isInList(user._id, docWord.highlightsMechanism)) {
+            hasMechanism = true;
+        }
+        if (isInList(user._id, docWord.highlightsFindings)) {
+            hasFinding = true;
+        }
+        if (isInList(user._id, docWord.highlightsBackground)) {
+            hasBackground = true;
+        }
+    });
+
+    if (hasPurpose === true && hasMechanism === true && hasFinding === true && hasBackground === true) {
+        return true;
+    } else {
+        return false;
+    }
 }

@@ -9,5 +9,6 @@ Meteor.methods({
     writeSummary: function(doc, sumType, content, user) {
         logger.trace("Calling write summary on the server");
         return DocumentManager.addSummary(doc, sumType, content, user);
+        return WordManager.updateWords(doc, content, user);
     },
 });
