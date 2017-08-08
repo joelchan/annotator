@@ -147,14 +147,19 @@ Template.annotateTask.events({
                                         user);
             Meteor.call("writeSummary", doc, "Highlights", LocalWords.find({docID: doc._id}).fetch(), user, function(err, res) {
               if (res) {
-                $this.button('reset');
-                alert("Finished! Going to last page next")
-                DocumentManager.markAnnotatedBy(doc,
-                                            user);
-                EventLogger.logFinishDocument(doc._id);
-                Router.go("Finish");
+                // $this.button('reset');
+                // alert("Finished! Going to last page next")
+                // DocumentManager.markAnnotatedBy(doc,
+                //                             user);
+                // EventLogger.logFinishDocument(doc._id);
+                // Router.go("Finish");
               }
             })
+            alert("Finished! Going to last page next")
+            DocumentManager.markAnnotatedBy(doc,
+                                        user);
+            EventLogger.logFinishDocument(doc._id);
+            Router.go("Finish");
             // DocumentManager.markAnnotatedBy(doc,
             //                               user);
             // EventLogger.logFinishDocument(doc._id);
