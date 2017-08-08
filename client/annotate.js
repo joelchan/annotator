@@ -1,7 +1,7 @@
 var logger = new Logger('Client:annotate');
 
-Logger.setLevel('Client:annotate', 'trace');
-// Logger.setLevel('Client:annotate', 'debug');
+// Logger.setLevel('Client:annotate', 'trace');
+Logger.setLevel('Client:annotate', 'debug');
 // Logger.setLevel('Client:annotate', 'info');
 // Logger.setLevel('Client:annotate', 'warn');
 
@@ -12,19 +12,9 @@ var currentStart = 0;
 // var currentEnd = {'s': 0, 'w': 0};
 var currentEnd = 0;
 
-Template.annotationPage.onCreated(function() {
-  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
-  //   logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
-  //   LocalWords.insert(word);
-  // });
-  // logger.trace("Local words: ");
-  // logger.trace(LocalWords.find().fetch());
-});
-
 Template.annotationPage.rendered = function(){
     logger.debug("Rendered annotation page...");
     Session.set("highlightState", "none");
-
 }
 
 Template.annotationPage.helpers({
@@ -36,15 +26,6 @@ Template.annotationPage.helpers({
             return false;
         }
     },
-});
-
-Template.annotateTask.onCreated(function() {
-  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
-  //   // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
-  //   LocalWords.insert(word);
-  // });
-  // logger.trace("Local words: ");
-  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
 });
 
 Template.annotateTask.rendered = function(){
@@ -96,83 +77,14 @@ Template.annotateTask.events({
         Session.set("highlightState", "none");
       }
     },
-
-    'click .another': function() {
-        do {
-            var doc = DocumentManager.sampleDocument();
-        }
-        while (doc._id === Session.get("currentDoc")._id);
-        Session.set("currentDoc", doc);
-    },
     'click .finished': function() {
-
-        var $this = $(this);
-        $this.button('loading');
         // grab and check summary data
-        var sumPurpose = $('#summ-purp').val();
-        var sumMechanism = $('#summ-mech').val();
-        logger.trace("Purpose summary: " + sumPurpose);
-        logger.trace("Mechanism summary: " + sumMechanism);
-        hasSummary = true;
-        // if (sumPurpose === "" || sumMechanism === "") {
-        //     var hasSummary = false;
-        // } else {
-        //     var hasSummary = true;
-        // }
-
-        // check if annotated
-        if (isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
-            var hasAnnotations = true;
+        var dataStatus = checkData();
+        if (dataStatus === "allGood") {
+          proceed()
         } else {
-            var hasAnnotations = false;
+          alert(checkWarnings[dataStatus])
         }
-
-        // only continue if we have all the data!
-        if (!hasSummary && !hasAnnotations) {
-            alert("Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
-        } else if (!hasSummary && hasAnnotations) {
-            alert("Please summarize the document!");
-        } else if (hasSummary && !hasAnnotations) {
-            alert("Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
-        } else {
-            // grab the summary data and push to finish
-            var user = Session.get("currentUser");
-            var doc = Session.get("currentDoc");
-            DocumentManager.addSummary(doc,
-                                        "Purpose",
-                                        sumPurpose,
-                                        user);
-            DocumentManager.addSummary(doc,
-                                        "Mechanism",
-                                        sumMechanism,
-                                        user);
-            Meteor.call("writeSummary", doc, "Highlights", LocalWords.find({docID: doc._id}).fetch(), user, function(err, res) {
-              if (res) {
-                // $this.button('reset');
-                // alert("Finished! Going to last page next")
-                // DocumentManager.markAnnotatedBy(doc,
-                //                             user);
-                // EventLogger.logFinishDocument(doc._id);
-                // Router.go("Finish");
-              }
-            })
-            alert("Finished! Going to last page next")
-            DocumentManager.markAnnotatedBy(doc,
-                                        user);
-            EventLogger.logFinishDocument(doc._id);
-            Router.go("Finish");
-            // DocumentManager.markAnnotatedBy(doc,
-            //                               user);
-            // EventLogger.logFinishDocument(doc._id);
-            // Router.go("Finish");
-            // DocumentManager.addSummary(
-            //   doc,
-            //   "Highlights",
-            //   Words.find({docID: doc._id}).fetch(),
-            //   user
-            // );
-        }
-        // Router.go("Finish");
     },
 
     'mouseup': function() {
@@ -187,12 +99,7 @@ Template.sentence.rendered = function(){
 }
 
 Template.sentence.onCreated(function() {
-  // Words.find({docID: Session.get("currentDoc")._id}).fetch().forEach(function(word) {
-  //   // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
-  //   LocalWords.insert(word);
-  // });
-  // logger.trace("Local words: ");
-  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
+
 });
 
 Template.sentence.helpers({
@@ -223,64 +130,6 @@ Template.word.helpers({
         return "key-neutral"
       }
     },
-    isPurpose: function() {
-        var userID = Session.get("currentUser")._id;
-        // logger.debug("Current user is " + userID);
-        // logger.trace("Users who have higlighted this as a purpose keyword: " +
-            // JSON.stringify(this.highlightsPurpose));
-        if (isInList(userID, this.highlightsPurpose)) {
-            // logger.debug("isPurpose is true");
-            return true;
-        } else {
-            return false;
-        }
-    },
-    isMech: function() {
-        var userID = Session.get("currentUser")._id;
-        // logger.debug("Current user is " + userID);
-        // logger.trace("Users who have higlighted this as a mechanism keyword: " +
-            // JSON.stringify(this.highlightsMechanism));
-        if (isInList(userID, this.highlightsMechanism)) {
-            // logger.debug("isMech is true");
-            return true;
-        } else {
-            return false;
-        }
-    },
-    isFinding: function() {
-        var userID = Session.get("currentUser")._id;
-        // logger.debug("Current user is " + userID);
-        // logger.trace("Users who have higlighted this as a mechanism keyword: " +
-            // JSON.stringify(this.highlightsMechanism));
-        if (isInList(userID, this.highlightsFindings)) {
-            // logger.debug("isMech is true");
-            return true;
-        } else {
-            return false;
-        }
-    },
-    isBackground: function() {
-        var userID = Session.get("currentUser")._id;
-        // logger.debug("Current user is " + userID);
-        // logger.trace("Users who have higlighted this as a mechanism keyword: " +
-            // JSON.stringify(this.highlightsMechanism));
-        if (isInList(userID, this.highlightsBackground)) {
-            // logger.debug("isMech is true");
-            return true;
-        } else {
-            return false;
-        }
-    },
-    isNeutral: function() {
-        var userID = Session.get("currentUser")._id;
-        if (!isInList(userID, this.highlightsPurpose) &&
-            !isInList(userID, this.highlightsMechanism)) {
-            // logger.debug("isNeutral is true");
-            return true;
-        } else {
-            return false;
-        }
-    }
 });
 
 Template.word.events({
@@ -323,77 +172,65 @@ Template.word.events({
         selectedWords.forEach(function(w) {
           markWord(w._id);
         });
-
-        // // get all sentences included in the highlight
-        // var selectedSentences = Sentences.find({psn: {$gte: currentStart.s, $lte: currentEnd.s}}).fetch();
-        // logger.trace("Selected sentences: " + JSON.stringify(selectedSentences));
-        // for (i=0; i<selectedSentences.length; i++) {
-        //   var thisSentence = selectedSentences[i];
-        //   logger.trace("This sentence: " + JSON.stringify(thisSentence));
-        //   var theseWords = Words.find({sentenceID: thisSentence._id}).fetch();
-        //   logger.trace("These words: " + JSON.stringify(theseWords));
-        //   // first sentence in range
-        //   if (i==0) {
-        //     theseWords.forEach(function(w) {
-        //       if (w.sequence >= currentStart.w) {
-        //         markWord(w._id);
-        //       }
-        //     });
-        //     // last sentence in range
-        //   } else if (i+1 == selectedSentences.length) {
-        //     theseWords.forEach(function(w) {
-        //       if (w.sequence <= currentEnd.w) {
-        //         markWord(w._id);
-        //       }
-        //     });
-        //     // everything else we just dump in as a highlight
-        //   } else {
-        //     theseWords.forEach(function(w) {
-        //       markWord(w._id);
-        //     });
-        //   }
-        // }
-
-        // markWord(wordID);
       }
     },
-
-//     'click .key-option': function(event) {
-//         var selection = event.currentTarget;
-//         // var keyType = selection.innerText;
-//         // console.log(selection);
-//         var word = selection.parentNode.previousElementSibling;
-//         // console.log(word);
-//         var wordID = trimFromString(word.id, "word-");
-//         var userID = Session.get("currentUser")._id;
-//         logger.trace(userID + " clicked on " + wordID);
-//         if (selection.classList.contains("purp")) {
-//             WordManager.markWord(wordID, userID, "Purpose");
-//         } else if (selection.classList.contains("mech")) {
-//             WordManager.markWord(wordID, userID, "Mechanism");
-//         } else {
-//             WordManager.markWord(wordID, userID, "Neither");
-//         }
-//     }
 })
 
-// markWord = function(wordID) {
-//   var userID = Session.get("currentUser")._id;
-//   logger.trace(userID + " clicked on " + wordID);
-//   var highlightType = Session.get("highlightState");
-//   logger.trace("highlightState: " + highlightType);
-//   if (highlightType === "purpose") {
-//       WordManager.markWord(wordID, userID, "Purpose");
-//   } else if (highlightType === "mechanism") {
-//       WordManager.markWord(wordID, userID, "Mechanism");
-//   } else if (highlightType === "finding") {
-//       WordManager.markWord(wordID, userID, "Finding");
-//   } else if (highlightType === "background") {
-//       WordManager.markWord(wordID, userID, "Background");
-//   } else {
-//       WordManager.markWord(wordID, userID, "Neither");
-//   }
-// }
+/*
+************
+General helper functions for this page
+************
+*/
+
+var checkWarnings = {
+  'noData': "Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.",
+  'noSummary': "Please summarize the document!",
+  'noAnnotations': "Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.",
+}
+
+checkData = function() {
+  // grab and check summary data
+  var sumPurpose = $('#summ-purp').val();
+  var sumMechanism = $('#summ-mech').val();
+  logger.trace("Purpose summary: " + sumPurpose);
+  logger.trace("Mechanism summary: " + sumMechanism);
+  hasSummary = true;
+
+  // check if annotated
+  if (isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
+      var hasAnnotations = true;
+  } else {
+      var hasAnnotations = false;
+  }
+
+  // only continue if we have all the data!
+  if (!hasSummary && !hasAnnotations) {
+      alert("Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
+      return "noData";
+  } else if (!hasSummary && hasAnnotations) {
+      alert("Please summarize the document!");
+      return "noSummary";
+  } else if (hasSummary && !hasAnnotations) {
+      alert("Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
+      return "noAnnotations"
+  } else {
+      return "allGood"
+  }
+}
+
+proceed = function() {
+  // grab the summary data and push to finish
+  var user = Session.get("currentUser");
+  var doc = Session.get("currentDoc");
+  Meteor.call("writeSummary", doc, "Highlights", LocalWords.find({docID: doc._id}).fetch(), user); // remove non-blocking for performance improvements
+
+  // move to the last page
+  alert("Finished! Going to last page next")
+  DocumentManager.markAnnotatedBy(doc,
+                              user);
+  EventLogger.logFinishDocument(doc._id);
+  Router.go("Finish");
+}
 
 markWord = function(wordID) {
     /******************************************************************
@@ -475,3 +312,87 @@ isAnnotatedBy = function(doc, user) {
         return false;
     }
 }
+
+/*
+******************
+Putting unused code here just in case we want to quickly access
+and reuse later
+******************
+
+'click .another': function() {
+    do {
+        var doc = DocumentManager.sampleDocument();
+    }
+    while (doc._id === Session.get("currentDoc")._id);
+    Session.set("currentDoc", doc);
+},
+
+'click .key-option': function(event) {
+    var selection = event.currentTarget;
+    // var keyType = selection.innerText;
+    // console.log(selection);
+    var word = selection.parentNode.previousElementSibling;
+    // console.log(word);
+    var wordID = trimFromString(word.id, "word-");
+    var userID = Session.get("currentUser")._id;
+    logger.trace(userID + " clicked on " + wordID);
+    if (selection.classList.contains("purp")) {
+        WordManager.markWord(wordID, userID, "Purpose");
+    } else if (selection.classList.contains("mech")) {
+        WordManager.markWord(wordID, userID, "Mechanism");
+    } else {
+        WordManager.markWord(wordID, userID, "Neither");
+    }
+}
+
+// get all sentences included in the highlight
+var selectedSentences = Sentences.find({psn: {$gte: currentStart.s, $lte: currentEnd.s}}).fetch();
+logger.trace("Selected sentences: " + JSON.stringify(selectedSentences));
+for (i=0; i<selectedSentences.length; i++) {
+  var thisSentence = selectedSentences[i];
+  logger.trace("This sentence: " + JSON.stringify(thisSentence));
+  var theseWords = Words.find({sentenceID: thisSentence._id}).fetch();
+  logger.trace("These words: " + JSON.stringify(theseWords));
+  // first sentence in range
+  if (i==0) {
+    theseWords.forEach(function(w) {
+      if (w.sequence >= currentStart.w) {
+        markWord(w._id);
+      }
+    });
+    // last sentence in range
+  } else if (i+1 == selectedSentences.length) {
+    theseWords.forEach(function(w) {
+      if (w.sequence <= currentEnd.w) {
+        markWord(w._id);
+      }
+    });
+    // everything else we just dump in as a highlight
+  } else {
+    theseWords.forEach(function(w) {
+      markWord(w._id);
+    });
+  }
+}
+
+markWord(wordID);
+
+markWord = function(wordID) {
+  var userID = Session.get("currentUser")._id;
+  logger.trace(userID + " clicked on " + wordID);
+  var highlightType = Session.get("highlightState");
+  logger.trace("highlightState: " + highlightType);
+  if (highlightType === "purpose") {
+      WordManager.markWord(wordID, userID, "Purpose");
+  } else if (highlightType === "mechanism") {
+      WordManager.markWord(wordID, userID, "Mechanism");
+  } else if (highlightType === "finding") {
+      WordManager.markWord(wordID, userID, "Finding");
+  } else if (highlightType === "background") {
+      WordManager.markWord(wordID, userID, "Background");
+  } else {
+      WordManager.markWord(wordID, userID, "Neither");
+  }
+}
+
+*/
