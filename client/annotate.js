@@ -5,7 +5,7 @@ Logger.setLevel('Client:annotate', 'trace');
 // Logger.setLevel('Client:annotate', 'info');
 // Logger.setLevel('Client:annotate', 'warn');
 
-LocalWords = new Mongo.Collection(null);
+// LocalWords = new Mongo.Collection(null);
 
 // var currentStart = {'s': 0, 'w': 0};
 var currentStart = 0;
@@ -53,6 +53,7 @@ Template.annotateTask.rendered = function(){
   var dbWords = Words.find({docID: doc._id}).fetch();
   logger.trace("dbWords: " + JSON.stringify(dbWords));
   if (LocalWords.find().count() < 1) {
+    LocalWords = new Mongo.Collection(null);
     dbWords.forEach(function(word) {
       // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
       LocalWords.insert(word);
