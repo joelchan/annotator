@@ -13,9 +13,9 @@
 </template>
 
 <template name="annotateTask">
-    <h1>Document has been finished by {{numAnnotations}} total people</h1>
+    <!-- <h1>Document has been finished by {{numAnnotations}} total people</h1> -->
     <div class="row instructions">
-        <p>Please read the product description below and help us:</p>
+        <!-- <p>Please read the product description below and help us:</p>
         <ol>
             <li>
                 Summarize the <span class="key-purpose">problem</span> and <span class="key-mechanism">mechanism(s)</span> of the product in the textboxes below.
@@ -24,9 +24,21 @@
                 Annotate the description to mark the individual words that best signal the unique <span class="key-purpose">problem</span> and/or <span class="key-mechanism">mechanism(s)</span> of the product. Mark a word by clicking on it and selecting the appropriate keyword type (e.g., problem or mechanism). You may mark as many words as you think will help.
             </li>
         </ol>
-        <p>Click on the "I'm finished" button below when you are done.</p>
-    </div>
-    <div class="divider">
+        <p>Click on the "I'm finished" button below when you are done.</p> -->
+        <p>Highlight the <span class="key-background">background</span>, <span class="key-purpose">purpose</span>, <span class="key-mechanism">mechanism</span>, and <span class="key-finding">finding</span> aspects of the abstract below. Select a highlight button to activate a highlight state. Then select parts of the text to apply the highlight state.</p>
+        <hr/>
+        <label>Highlight buttons:</label>
+        <br/>
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default background init-highlight">Highlight{{statusBackground}} background</button>
+          <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
+          <button type="button" class="btn btn-default mechanism init-highlight">Highlight{{statusMechanism}} mechanism</button>
+          <button type="button" class="btn btn-default finding init-highlight">Highlight{{statusFinding}} finding</button>
+          <button type="button" class="btn btn-default unmark init-highlight">Unhighlight{{statusUnmark}}</button>
+          <!-- <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button> -->
+        </div>
+        <p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
+    <!-- <div class="divider">
       <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-default background init-highlight">Highlight background</button>
         <button type="button" class="btn btn-default purpose init-highlight">Highlight purpose</button>
@@ -35,6 +47,7 @@
         <button type="button" class="btn btn-default unmark init-highlight">Remove highlights</button>
         <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button>
       </div>
+    </div> -->
     </div>
     <div class="row doc-data">
         <div class="col-md-6 col-xs-6 doc">

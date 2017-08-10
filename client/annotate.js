@@ -55,27 +55,75 @@ Template.annotateTask.helpers({
     numAnnotations: function() {
       var doc = Documents.findOne(Session.get("currentDoc")._id);
       return doc.annotatedBy.length;
-    }
+    },
+    highlightDescription: function() {
+      if (!Session.equals("highlightState", "none")) {
+        return highlightDescriptions[Session.get("highlightState")]
+      } else {
+        return "are just words";
+      }
+    },
+    statusBackground: function() {
+      if (Session.equals("highlightState", "background")) {
+        return "ing";
+      } else {
+        return "";
+      }
+    },
+    statusPurpose: function() {
+      if (Session.equals("highlightState", "purpose")) {
+        return "ing";
+      } else {
+        return "";
+      }
+    },
+    statusMechanism: function() {
+      if (Session.equals("highlightState", "mechanism")) {
+        return "ing";
+      } else {
+        return "";
+      }
+    },
+    statusFinding: function() {
+      if (Session.equals("highlightState", "finding")) {
+        return "ing";
+      } else {
+        return "";
+      }
+    },
+    statusUnmark: function() {
+      if (Session.equals("highlightState", "unmark")) {
+        return "ing";
+      } else {
+        return "";
+      }
+    },
 });
 
 Template.annotateTask.events({
     'click .init-highlight': function(event) {
       var button = event.currentTarget;
-      $('.init-highlight').removeClass("btn-success");
-      button.classList.add("btn-success");
-      if (isInList("purpose", button.classList)) {
-        Session.set("highlightState", "purpose");
-      } else if (isInList("mechanism", button.classList)) {
-        Session.set("highlightState", "mechanism");
-      } else if (isInList("finding", button.classList)) {
-        Session.set("highlightState", "finding");
-      } else if (isInList("background", button.classList)) {
-        Session.set("highlightState", "background");
-      } else if (isInList("unmark", button.classList)) {
-        Session.set("highlightState", "unmark");
+      $('.init-highlight').removeClass("active-" + Session.get("highlightState"));
+      $('.highlight-description').show();
+      $('.highlight-description').removeClass("key-" + Session.get("highlightState"));
+      if (!isInList("unmark", button.classList)) {
+        if (isInList("purpose", button.classList)) {
+          Session.set("highlightState", "purpose");
+        } else if (isInList("mechanism", button.classList)) {
+          Session.set("highlightState", "mechanism");
+        } else if (isInList("finding", button.classList)) {
+          Session.set("highlightState", "finding");
+        } else if (isInList("background", button.classList)) {
+          Session.set("highlightState", "background");
+        } else {
+        }
+        // button.classList.add("active-" + Session.get("highlightState"));
+        $('.highlight-description').addClass("key-" + Session.get("highlightState"));
       } else {
-        Session.set("highlightState", "none");
+        Session.set("highlightState", "unmark");
+        $('.highlight-description').hide();
       }
+      button.classList.add("active-" + Session.get("highlightState"));
     },
     'click .finished': function() {
         // grab and check summary data
@@ -163,7 +211,7 @@ Template.word.events({
         logger.trace("Current start: " + currentStart);
         logger.trace("Current end: " + currentEnd);
 
-        var selectedWords = LocalWords.find({docID: Session.get("currentDoc")._id,
+        var selectedWords = LocalWords.find({//docID: Session.get("currentDoc")._id,
                                         globalPsn: {$gte: currentStart,
                                                     $lte: currentEnd}
                                         }).fetch();

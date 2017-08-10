@@ -11,23 +11,43 @@
 }
 
 .key-purpose {
-    background-color: #F9CCCC;
+    background-color: #F9CCCC !important;
 }
 
 .key-mechanism {
-    background-color: rgb(194, 240, 194);
+    background-color: rgb(194, 240, 194) !important;
 }
 
 .key-finding {
-    background-color: #66b3ff;
+    background-color: #66b3ff !important;
 }
 
 .key-background {
-    background-color: #ffff99;
+    background-color: #ffff99 !important;
+}
+
+.active-purpose {
+    background-color: #F9CCCC !important;
+}
+
+.active-mechanism {
+    background-color: rgb(194, 240, 194) !important;
+}
+
+.active-finding {
+    background-color: #66b3ff !important;
+}
+
+.active-background {
+    background-color: #ffff99 !important;
+}
+
+.active-unmark {
+    background-color: grey !important;
 }
 
 .key-neutral {
-    background-color: white;
+    background-color: white !important;
 }
 
 .token {
