@@ -27,8 +27,7 @@
 						</ul>
 						<hr/>
 						<h3>Let's practice!</h3>
-						<p>Select a highlight button to activate a highlight state. Then select parts of the text to apply the highlight state. When you're finished, <button class="test btn btn-sm btn-primary">Check your work!</button></p>
-						<p class="trial-result" style="display:none;">Your highlights are {{score}} consistent with the gold standard!</p>
+						<p>Select a highlight button to activate a highlight state. Then select parts of the text to apply the highlight state.</p>
 						<div class="row tutorial-example">
 						<label>Highlight buttons:</label>
 						<br/>
@@ -42,18 +41,21 @@
 			      </div>
 						<p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
 							<div class="col-md-5 col-xs-5 doc example">
+								<label class="trial-names" style="display:none;">Your highlights</label><br/>
 								{{#each testWords}}
 									{{> word}}
 								{{/each}}
-
 							</div>
 							<div class="col-md-5 col-xs-5 doc example gold-example" style="display:none;">
+								<label class="trial-names" style="display:none;">Correct highlights</label><br/>
 								{{#each goldWords}}
 									{{> goldWord}}
 								{{/each}}
 							</div>
 						</div>
 						<hr/>
+						<p class="trial-result" style="display:none;">Your highlights are {{score}} consistent with the correct highlights!</p>
+						<button class="test btn btn-lg btn-primary">Check your work</button> then
 						<button class="continue btn btn-lg btn-success">Continue to main task</button>
 						<!-- <div class="row tutorial-example">
 

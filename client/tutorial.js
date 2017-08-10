@@ -66,7 +66,15 @@ Template.tutorial.helpers({
     }
   },
   score: function() {
-
+    var highlightedWords = LocalWords.find().fetch();
+    var numCorrect = 0;
+    for (i=0; i < highlightedWords.length; i++) {
+      if (highlightType(highlightedWords[i]) === highlightType(goldTutorialWords[i])) {
+        numCorrect += 1;
+      }
+    }
+    var score = numCorrect/highlightedWords.length*100;
+    return score.toString().substring(0,4) + "%";
   }
 })
 
@@ -94,6 +102,7 @@ Template.tutorial.events({
       var dataOk = true;
       if (dataOk === true) {
         $('.gold-example').toggle();
+        $('.trial-result').toggle();
       }
 
     },
@@ -137,6 +146,26 @@ Template.tutorial.events({
       button.classList.add("active-" + Session.get("highlightState"));
     },
 });
+
+var highlightType = function(word) {
+  /*
+  Might regret writing this. Dumb greedy function that just
+  returns the last highlight field in the list of fields that has any user who marked it.
+  */
+  var fields = [
+    "highlightsPurpose",
+    "highlightsMechanism",
+    "highlightsFindings",
+    "highlightsBackground",
+  ]
+  var result = "none";
+  fields.forEach(function(field) {
+    if (word[field].length > 0) {
+      result = field;
+    }
+  });
+  return result;
+}
 
 highlightDescriptions = {
   "purpose": "What do the paper's authors want to do or know?",
