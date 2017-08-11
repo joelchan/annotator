@@ -125,6 +125,13 @@ Template.annotateTask.events({
       }
       button.classList.add("active-" + Session.get("highlightState"));
     },
+    'mouseup': function(event) {
+      // catch mouseups that happen if ppl are too quick when switching highlights
+      if (Session.equals("isHighlighting", true)) {
+        logger.debug("Mouse up out of the doc, ending highlight...");
+        Session.set("isHighlighting", false);
+      }
+    },
     'click .finished': function() {
         // grab and check summary data
         var dataStatus = checkData();

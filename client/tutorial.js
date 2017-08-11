@@ -96,6 +96,13 @@ Template.goldWord.helpers({
 });
 
 Template.tutorial.events({
+    'mouseup': function(event) {
+      // catch mouseups that happen if ppl are too quick when switching highlights
+      if (Session.equals("isHighlighting", true)) {
+        logger.debug("Mouse up out of the doc, ending highlight...");
+        Session.set("isHighlighting", false);
+      }
+    },
     'click .test' : function() {
 
       var dataStatus = checkData();
