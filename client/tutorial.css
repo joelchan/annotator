@@ -15,6 +15,11 @@ hr {
   margin-bottom: 10px;
 }
 
+.trial-result {
+  font-weight: bold;
+  font-size: 16px;
+}
+
 .continue {
   margin-bottom: 10px;
 }

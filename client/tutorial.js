@@ -98,13 +98,30 @@ Template.goldWord.helpers({
 
 Template.tutorial.events({
     'click .test' : function() {
-      // var dataOk = checkData();
-      var dataOk = true;
-      if (dataOk === true) {
-        $('.gold-example').toggle();
-        $('.trial-result').toggle();
-      }
 
+      var dataStatus = checkData();
+      if (dataStatus === "allGood") {
+        $('.gold-example').toggle();
+        // $('trial-result-filler').hide();
+        $('.trial-result').show();
+        $('.trial-names').show();
+        $('.continue').prop('disabled', false);
+      } else {
+        alert(checkWarnings[dataStatus])
+      }
+      // // var dataOk = true;
+      // if (isAnnotatedBy(Session.get("currentUser")) && mostlyAnnotatedBy(Session.get("currentUser"))) {
+      //   alert("")
+      // } else if (!isAnnotatedBy(Session.get("currentUser"))) {
+      //   alert("Please use all of the highlight types! " +
+      //   "If you really think one of the highlight types is missing from the abstract, just mark a random punctuation with it.");
+      // } else if (!mostlyAnnotatedBy(Session.get("currentUser"))) {
+      //   alert("Please highlight all of the relevant parts of the abstract! " +
+      //   "Most abstracts only have 1 sentence at most that doesn't fit into our highlight types.");
+      // } else {
+      //   $('.gold-example').toggle();
+      //   $('.trial-result').toggle();
+      // }
     },
     'click .continue' : function() {
         logger.debug("User clicked continue");

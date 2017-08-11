@@ -1,7 +1,7 @@
 var logger = new Logger('Client:annotate');
 
-// Logger.setLevel('Client:annotate', 'trace');
-Logger.setLevel('Client:annotate', 'debug');
+Logger.setLevel('Client:annotate', 'trace');
+// Logger.setLevel('Client:annotate', 'debug');
 // Logger.setLevel('Client:annotate', 'info');
 // Logger.setLevel('Client:annotate', 'warn');
 
@@ -129,7 +129,7 @@ Template.annotateTask.events({
         // grab and check summary data
         var dataStatus = checkData();
         if (dataStatus === "allGood") {
-          proceed()
+          finishTask()
         } else {
           alert(checkWarnings[dataStatus])
         }
@@ -230,43 +230,41 @@ General helper functions for this page
 ************
 */
 
-var checkWarnings = {
-  'noData': "Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.",
-  'noSummary': "Please summarize the document!",
-  'noAnnotations': "Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.",
+checkWarnings = {
+  'noData': "Please highlight all of the relevant parts of the abstract! Most abstracts only have 1 sentence at most that doesn't fit into our highlight types. Also please use all of the highlight types! If you really think one of the highlight types is missing from the abstract, just mark a random punctuation with it.",
+  'fewAnnotations': "Please highlight all of the relevant parts of the abstract! Most abstracts only have 1 sentence at most that doesn't fit into our highlight types.",
+  'noAnnotations': "Please use all of the highlight types! If you really think one of the highlight types is missing from the abstract, just mark a random punctuation with it.",
 }
 
 checkData = function() {
   // grab and check summary data
-  var sumPurpose = $('#summ-purp').val();
-  var sumMechanism = $('#summ-mech').val();
-  logger.trace("Purpose summary: " + sumPurpose);
-  logger.trace("Mechanism summary: " + sumMechanism);
-  hasSummary = true;
+  // var sumPurpose = $('#summ-purp').val();
+  // var sumMechanism = $('#summ-mech').val();
+  // logger.trace("Purpose summary: " + sumPurpose);
+  // logger.trace("Mechanism summary: " + sumMechanism);
+  // hasSummary = true;
 
   // check if annotated
-  if (isAnnotatedBy(Session.get("currentDoc"), Session.get("currentUser"))) {
-      var hasAnnotations = true;
-  } else {
-      var hasAnnotations = false;
-  }
+  // if (isAnnotatedBy(Session.get("currentUser"))) {
+  //     var hasAnnotations = true;
+  // } else {
+  //     var hasAnnotations = false;
+  // }
 
   // only continue if we have all the data!
-  if (!hasSummary && !hasAnnotations) {
-      alert("Please summarize and annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
+  var user = Session.get("currentUser");
+  if (!isAnnotatedBy(user) && !mostlyAnnotatedBy(user, .66)) {
       return "noData";
-  } else if (!hasSummary && hasAnnotations) {
-      alert("Please summarize the document!");
-      return "noSummary";
-  } else if (hasSummary && !hasAnnotations) {
-      alert("Please annotate the document! Remember: we would like at least one keyword for each of the highlight types.");
-      return "noAnnotations"
+  } else if (!isAnnotatedBy(user)) {
+      return "noAnnotations";
+  } else if (!mostlyAnnotatedBy(user, .66)) {
+      return "fewAnnotations"
   } else {
       return "allGood"
   }
 }
 
-proceed = function() {
+var finishTask = function() {
   // grab the summary data and push to finish
   var user = Session.get("currentUser");
   var doc = Session.get("currentDoc");
@@ -332,8 +330,8 @@ markWord = function(wordID) {
     return true;
 }
 
-isAnnotatedBy = function(doc, user) {
-    var docWords = LocalWords.find({docID: doc._id}).fetch();
+isAnnotatedBy = function(user) {
+    var docWords = LocalWords.find().fetch();
 
     var hasPurpose = false;
     var hasMechanism = false;
@@ -359,6 +357,46 @@ isAnnotatedBy = function(doc, user) {
     } else {
         return false;
     }
+}
+
+mostlyAnnotatedBy = function(user, threshold) {
+  /*
+  setting threshold to .66 (~2/3) for now (based on CSCW gold standard of 50),
+  let's see what kind of distribution we get.
+  */
+  if (!threshold) {
+    threshold = .66;
+  }
+  var docWords = LocalWords.find().fetch();
+  var numAnnotated = 0;
+  docWords.forEach(function(docWord) {
+    ["highlightsPurpose", "highlightsMechanism", "highlightsFindings", "highlightsBackground"].forEach(function(field) {
+      if (isInList(user._id, docWord[field])) {
+        numAnnotated += 1;
+      }
+    })
+  });
+  var propAnnotated = numAnnotated/docWords.length;
+  logger.trace("% annotated: " + propAnnotated);
+  logger.trace("% annotated data type: " + typeof(propAnnotated))
+  logger.trace("threshold: " + threshold);
+  logger.trace("threshold data type: " + typeof(threshold));
+  var distanceToThreshold = threshold-propAnnotated;
+  logger.trace("% annotated: " + propAnnotated);
+  logger.trace("% annotated data type: " + typeof(propAnnotated))
+  logger.trace("threshold: " + threshold);
+  logger.trace("threshold data type: " + typeof(threshold));
+  logger.trace("distance to threshold: " + typeof(distanceToThreshold));
+  logger.trace("distance to threshold data type: " + typeof(distanceToThreshold));
+  if (propAnnotated >= threshold) {
+    logger.trace("Mostly annotated!")
+    return true;
+  } else {
+    logger.trace("Too few annotations.")
+    logger.trace("Distance to threshold of " + threshold + " = " + distanceToThreshold);
+    return false;
+  }
+  // });
 }
 
 /*
