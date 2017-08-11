@@ -46,7 +46,7 @@
 									<div class="col-md-5 col-xs-5 doc example">
 										<p class="trial-names" style="display:none;"><label>Your highlights</label></p>
 										{{#each testWords}}
-											{{> word}}
+											{{> tutorialWord}}
 										{{/each}}
 									</div>
 									<div class="col-md-5 col-xs-5 doc example gold-example" style="display:none;">
@@ -68,6 +68,14 @@
 						</div>
         </div>
     </div>
+</template>
+
+<template name="tutorialWord">
+    <!-- Single button -->
+    <!-- <div class="btn-group token-container"> -->
+    <span class="token {{keyType}}" id="word-{{_id}}">
+      {{content}}
+    </span>
 </template>
 
 <template name="goldWord">

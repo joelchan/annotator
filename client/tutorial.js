@@ -10,10 +10,9 @@ var currentStart = 0;
 var currentEnd = 0;
 
 Template.tutorial.rendered = function() {
-  trainTutorialWords.forEach(function(word) {
-    LocalWords.insert(word);
-  });
   Session.set("highlightState", "none");
+
+
 }
 
 Template.tutorial.helpers({
@@ -164,6 +163,94 @@ Template.tutorial.events({
     },
 });
 
+Template.tutorialWord.rendered = function(){
+  // var doc = Session.get("currentDoc");
+  // logger.trace("Current doc: " + JSON.stringify(doc));
+  // var dbWords = Words.find({docID: doc._id}).fetch();
+  // logger.trace(dbWords.length + "dbWords");
+  // if (LocalWords.find().count() < 1) { // newly created local
+  //   // LocalWords = new Mongo.Collection(null);
+  //   dbWords.forEach(function(word) {
+  //     // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //     LocalWords.insert(word);
+  //   });
+  // } else { // refreshed, or going from next page
+  //   var randomWord = LocalWords.findOne();
+  //   if (!randomWord.hasOwnProperty("sentenceID")) {
+  //     // reset if we're coming from the tutorial page
+  //     LocalWords = new Mongo.Collection(null);
+  //     dbWords.forEach(function(word) {
+  //       // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //       LocalWords.insert(word);
+  //     });
+  //   }
+  // }
+  // logger.trace(LocalWords.find().count() + "local words");
+  logger.debug("Rendered word...");
+}
+
+Template.tutorialWord.helpers({
+    keyType: function() {
+      var userID = Session.get("currentUser")._id;
+      if (isInList(userID, this.highlightsPurpose)) {
+          // logger.debug("isPurpose is true");
+          return "key-purpose";
+      } else if (isInList(userID, this.highlightsMechanism)) {
+          return "key-mechanism"
+      } else if (isInList(userID, this.highlightsFindings)) {
+          return "key-finding"
+      } else if (isInList(userID, this.highlightsBackground)) {
+          return "key-background"
+      } else {
+        return "key-neutral"
+      }
+    },
+});
+
+Template.tutorialWord.events({
+    'mousedown .token': function(event) {
+      if (Session.get("highlightState") != "none") {
+          logger.debug("Begin highlight");
+          Session.set("isHighlighting", true);
+          var word = event.currentTarget;
+          logger.trace(word.innerHTML);
+          var wordID = trimFromString(word.id, "word-");
+          // currentStart.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
+          currentStart = LocalWords.findOne(wordID).globalPsn;
+          markWord(wordID);
+      }
+    },
+
+    'mouseup .token': function(event) {
+      logger.debug("End highlight");
+      Session.set("isHighlighting", false);
+    },
+
+    'mouseover .token': function(event) {
+      logger.debug("Hovering over token");
+      if (Session.get("isHighlighting")) {
+        var word = event.currentTarget;
+        logger.trace(word.innerHTML);
+        var wordID = trimFromString(word.id, "word-");
+        // currentEnd.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
+        // currentEnd.w = Words.findOne(wordID).sequence;
+        currentEnd = LocalWords.findOne(wordID).globalPsn;
+        logger.trace("Current start: " + currentStart);
+        logger.trace("Current end: " + currentEnd);
+
+        var selectedWords = LocalWords.find({//docID: Session.get("currentDoc")._id,
+                                        globalPsn: {$gte: currentStart,
+                                                    $lte: currentEnd}
+                                        }).fetch();
+        logger.trace("Selected words: " + selectedWords);
+        // mark all of these words
+        selectedWords.forEach(function(w) {
+          markWord(w._id);
+        });
+      }
+    },
+})
+
 var highlightType = function(word) {
   /*
   Might regret writing this. Dumb greedy function that just
@@ -192,7 +279,7 @@ highlightDescriptions = {
   "unmark": "",
 }
 
-var goldTutorialWords = [
+goldTutorialWords = [
   {
     "globalPsn": 0,
     "highlightsFindings": [],
@@ -1230,7 +1317,7 @@ var goldTutorialWords = [
   }
 ]
 
-var trainTutorialWords = [
+trainTutorialWords = [
   {
     "globalPsn": 0,
     "highlightsFindings": [],

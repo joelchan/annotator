@@ -29,19 +29,19 @@ Template.annotationPage.helpers({
 });
 
 Template.annotateTask.rendered = function(){
-  var doc = Session.get("currentDoc");
-  logger.trace("Current doc: " + JSON.stringify(doc));
-  var dbWords = Words.find({docID: doc._id}).fetch();
-  logger.trace("dbWords: " + JSON.stringify(dbWords));
-  if (LocalWords.find().count() < 1) {
-    // LocalWords = new Mongo.Collection(null);
-    dbWords.forEach(function(word) {
-      // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
-      LocalWords.insert(word);
-    });
-  }
-  logger.trace("Local words: ");
-  logger.trace(JSON.stringify(LocalWords.find().fetch()));
+  // var doc = Session.get("currentDoc");
+  // logger.trace("Current doc: " + JSON.stringify(doc));
+  // var dbWords = Words.find({docID: doc._id}).fetch();
+  // logger.trace("dbWords: " + JSON.stringify(dbWords));
+  // if (LocalWords.find().count() < 1) {
+  //   // LocalWords = new Mongo.Collection(null);
+  //   dbWords.forEach(function(word) {
+  //     // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //     LocalWords.insert(word);
+  //   });
+  // }
+  // logger.trace("Local words: ");
+  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
   logger.debug("Rendered annotation task...");
 }
 
@@ -143,6 +143,29 @@ Template.annotateTask.events({
 })
 
 Template.sentence.rendered = function(){
+  // logger.trace(JSON.stringify(LocalWords.find().fetch()));
+  // var doc = Session.get("currentDoc");
+  // logger.trace("Current doc: " + JSON.stringify(doc));
+  // var dbWords = Words.find({docID: doc._id}).fetch();
+  // logger.trace(dbWords.length + "dbWords");
+  // if (LocalWords.find().count() < 1) { // newly created local
+  //   // LocalWords = new Mongo.Collection(null);
+  //   dbWords.forEach(function(word) {
+  //     // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //     LocalWords.insert(word);
+  //   });
+  // } else { // refreshed, or going from next page
+  //   var randomWord = LocalWords.findOne();
+  //   if (!randomWord.hasOwnProperty("sentenceID")) {
+  //     // reset if we're coming from the tutorial page
+  //     LocalWords = new Mongo.Collection(null);
+  //     dbWords.forEach(function(word) {
+  //       // logger.trace("Inserting word " + JSON.stringify(word) + " into local words collection");
+  //       LocalWords.insert(word);
+  //     });
+  //   }
+  // }
+  // logger.trace(LocalWords.find().count() + "local words");
   logger.debug("Rendered sentence...");
 }
 
@@ -159,6 +182,7 @@ Template.sentence.helpers({
 });
 
 Template.word.rendered = function(){
+
   logger.debug("Rendered word...");
 }
 
