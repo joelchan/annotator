@@ -65,15 +65,7 @@ Template.tutorial.helpers({
     }
   },
   score: function() {
-    var highlightedWords = LocalWords.find().fetch();
-    var numCorrect = 0;
-    for (i=0; i < highlightedWords.length; i++) {
-      if (highlightType(highlightedWords[i]) === highlightType(goldTutorialWords[i])) {
-        numCorrect += 1;
-      }
-    }
-    var score = numCorrect/highlightedWords.length*100;
-    return score.toString().substring(0,4) + "%";
+    return scoreTutorial();
   }
 })
 
@@ -104,7 +96,10 @@ Template.tutorial.events({
       }
     },
     'click .test' : function() {
-
+      var user = Session.get("currentUser");
+      var score = scoreTutorial();
+      var highlights = LocalWords.find().fetch();
+      EventLogger.logCheckTutorialAccuracy(user, score, highlights)
       var dataStatus = checkData();
       if (dataStatus === "allGood") {
         $('.gold-example').toggle();
@@ -112,6 +107,7 @@ Template.tutorial.events({
         $('.trial-result').show();
         $('.trial-names').show();
         $('.continue').prop('disabled', false);
+        UserManager.recordTutorialAccuracy(user, score, highlights)
       } else {
         alert(checkWarnings[dataStatus])
       }
@@ -257,6 +253,18 @@ Template.tutorialWord.events({
       }
     },
 })
+
+var scoreTutorial = function() {
+  var highlightedWords = LocalWords.find().fetch();
+  var numCorrect = 0;
+  for (i=0; i < highlightedWords.length; i++) {
+    if (highlightType(highlightedWords[i]) === highlightType(goldTutorialWords[i])) {
+      numCorrect += 1;
+    }
+  }
+  var score = numCorrect/highlightedWords.length*100;
+  return score.toString().substring(0,4) + "%";
+}
 
 var highlightType = function(word) {
   /*
