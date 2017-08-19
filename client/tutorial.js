@@ -111,7 +111,7 @@ Template.tutorial.events({
       EventLogger.logCheckTutorialAccuracy(user, score, highlights)
       var dataStatus = checkData("ex1");
       if (dataStatus === "allGood") {
-        $('.gold-example').toggle();
+        $('.gold-example-1').show();
         // $('trial-result-filler').hide();
         $('.trial-result-1').show();
         $('.trial-names-1').show();
@@ -141,7 +141,7 @@ Template.tutorial.events({
       EventLogger.logCheckTutorialAccuracy(user, score, highlights)
       var dataStatus = checkData("ex2");
       if (dataStatus === "allGood") {
-        $('.gold-example').toggle();
+        $('.gold-example-2').show();
         // $('trial-result-filler').hide();
         $('.trial-result-2').show();
         $('.trial-names-2').show();
