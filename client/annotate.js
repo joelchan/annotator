@@ -267,7 +267,7 @@ checkWarnings = {
   'noAnnotations': "Please use all of the highlight types! If you really think one of the highlight types is missing from the abstract, just mark a random punctuation with it.",
 }
 
-checkData = function() {
+checkData = function(docID) {
   // grab and check summary data
   // var sumPurpose = $('#summ-purp').val();
   // var sumMechanism = $('#summ-mech').val();
@@ -284,11 +284,11 @@ checkData = function() {
 
   // only continue if we have all the data!
   var user = Session.get("currentUser");
-  if (!isAnnotatedBy(user) && !mostlyAnnotatedBy(user, .66)) {
+  if (!isAnnotatedBy(user, docID) && !mostlyAnnotatedBy(user, docID, .66)) {
       return "noData";
-  } else if (!isAnnotatedBy(user)) {
+  } else if (!isAnnotatedBy(user, docID)) {
       return "noAnnotations";
-  } else if (!mostlyAnnotatedBy(user, .66)) {
+  } else if (!mostlyAnnotatedBy(user, docID, .66)) {
       return "fewAnnotations"
   } else {
       return "allGood"
@@ -361,8 +361,8 @@ markWord = function(wordID) {
     return true;
 }
 
-isAnnotatedBy = function(user) {
-    var docWords = LocalWords.find().fetch();
+isAnnotatedBy = function(user, docID) {
+    var docWords = LocalWords.find({docID: docID}).fetch();
 
     var hasPurpose = false;
     var hasMechanism = false;
@@ -390,7 +390,7 @@ isAnnotatedBy = function(user) {
     }
 }
 
-mostlyAnnotatedBy = function(user, threshold) {
+mostlyAnnotatedBy = function(user, docID, threshold) {
   /*
   setting threshold to .66 (~2/3) for now (based on CSCW gold standard of 50),
   let's see what kind of distribution we get.
@@ -398,7 +398,7 @@ mostlyAnnotatedBy = function(user, threshold) {
   if (!threshold) {
     threshold = .66;
   }
-  var docWords = LocalWords.find().fetch();
+  var docWords = LocalWords.find({docID: docID}).fetch();
   var numAnnotated = 0;
   docWords.forEach(function(docWord) {
     ["highlightsPurpose", "highlightsMechanism", "highlightsFindings", "highlightsBackground"].forEach(function(field) {

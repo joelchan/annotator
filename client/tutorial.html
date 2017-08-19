@@ -1,86 +1,109 @@
 	<template name="tutorial">
     <div class="container">
         <div class="row instructions">
-						<h3>Instructions</h3>
-            <p>We'd like you to read a research paper abstract and highlight the parts that describe the paper's:</p>
-						<ol>
-							<li><span class="key-background">Background/implications:</span> What is the intellectual context of this work? What other (higher-level) goals/questions can be furthered by this work? How might this help other research(ers)?</li>
-							<li><span class="key-purpose">Purpose:</span> What do the paper's authors want to do or know?</li>
-							<li><span class="key-mechanism">Mechanism:</span> How did the paper's authors do it or find out?</li>
-							<li><span class="key-finding">Findings:</span> Did it work? What did the paper's authors find out?</li>
-						</ol>
-
-						<p>Here are examples of each highlight type in the context of two different abstracts:</p>
-						<div class="row tutorial-example">
-							<div class="col-md-5 col-xs-5 doc example">
-								<p><label class="trial-names">Example 1</label></p>
-								<span class="key-background">The management of group context in socially mediating technologies is an important challenge for the design community</span>. <span class="key-purpose">To better understand how users manage group context, </span><span class="key-mechanism">we explored the practice of multiple profile management in social media.</span> <span class="key-finding">In doing so, we observed creative and opportunistic strategies for group context management. We found that multiple profile maintenance is motivated by four factors: privacy, identity, utility, and propriety. Drawing on these motives, we observe a continuum of boundary regulation behaviors: pseudonymity, practical obscurity, and transparent separation.</span> <span class="key-background">Based on these findings, we encourage designers of group context management systems to more broadly consider motives and practices of group separations in social media. Group context management systems should be privacy-enhancing, but a singular focus on privacy overlooks a range of other group context management practices.</span>
-							</div>
-							<div class="col-md-5 col-xs-5 doc example">
-								<p><label class="trial-names">Example 2</label></p>
-								<span class="key-purpose">In this paper we explore the challenges in crowdsourcing the task of translation over the web in which remotely located translators work on providing translations independent of each other.</span> <span class="key-mechanism">We then propose a collaborative workflow for crowdsourcing translation to address some of these challenges. In our pipeline model, the translators are working in phases where output from earlier phases can be enhanced in the subsequent phases. </span> <span class="key-background">We also highlight some of the novel contributions of the pipeline model like assistive translation and translation synthesis that can leverage monolingual and bilingual speakers alike. </span> <span class="key-finding">We evaluate our approach by eliciting translations for both a minority-to-majority language pair and a minority-to-minority language pair. We observe that in both scenarios, our workflow produces better quality translations in a cost-effective manner, when compared to the traditional crowdsourcing workflow.</span>
-							</div>
-						</div>
-
-						<p>As you can see, you don't have to understand exactly what the authors are saying; you can often tell just based on writing/word-level cues when authors are saying a particular kind of thing:</p>
-						<ul>
-							<li><strong>Example 1</strong> demonstrates one common pattern:
-								<ol>
-									<li>state the <span class="key-background">background</span> for the paper in the beginning, quickly move to</li> 
-									<li>describe the specific <span class="key-purpose">purpose</span> of the paper, then go on to</li>
-									<li>discuss the <span class="key-mechanism">mechanisms</span> and <span class="key-finding">findings</span> of the work, and </li>
-									<li>zoom back up to <span class="key-background">how their work is important for questions/goals XYZ</span>)</li>
-								</ol>
-							</li>
-							<li><strong>Example 2</strong> illustrates another possible pattern:
-								<ol>
-									<li>immediately state the specific <span class="key-purpose">purpose</span> of the paper and <span class="key-mechanism">the approach introduced by the paper that achieves that purpose</span>, followed by </li>
-									<li><span class="key-background">a statement of how others could benefit from ths work</span>, and then </li>
-									<li>describing <span class="key-finding">how they know the approach works</span></li>
-								</ol>
-							</li>
-						</ul>
-						<hr/>
-						<h3>Let's practice!</h3>
-						<p>Select a highlight button to activate a highlight state. Then select parts of the text to apply the highlight state.</p>
-						<div class="row tutorial-example">
+					<div class="col-md-10 col-xs-10">
+						<div class="row" id="instructions">
 							<div class="col-md-12 col-xs-12">
-								<label>Highlight buttons:</label>
-								<br/>
-								<div class="btn-group" role="group" aria-label="...">
-					        <button type="button" class="btn btn-default background init-highlight">Highlight{{statusBackground}} background/implications</button>
-					        <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
-					        <button type="button" class="btn btn-default mechanism init-highlight">Highlight{{statusMechanism}} mechanism</button>
-					        <button type="button" class="btn btn-default finding init-highlight">Highlight{{statusFinding}} finding</button>
-					        <button type="button" class="btn btn-default unmark init-highlight">Unhighlight{{statusUnmark}}</button>
-					        <!-- <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button> -->
-					      </div>
-								<p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
-									<div class="col-md-5 col-xs-5 doc example">
-										<p class="trial-names" style="display:none;"><label>Your highlights</label></p>
-										{{#each testWords}}
-											{{> tutorialWord}}
-										{{/each}}
-									</div>
-									<div class="col-md-5 col-xs-5 doc example gold-example" style="display:none;">
-										<p class="trial-names" style="display:none;"><label>Correct highlights</label></p>
-										{{#each goldWords}}
-											{{> goldWord}}
-										{{/each}}
+								<h3>Instructions</h3>
+		            <p>We'd like you to read a research paper abstract and highlight the parts that describe the paper's:</p>
+								<ol>
+									<li><span class="key-background">Background/implications:</span> What is the intellectual context of this work? What other (higher-level) goals/questions can be furthered by this work? How might this help other research(ers)?</li>
+									<li><span class="key-purpose">Purpose:</span> What do the paper's authors want to do or know?</li>
+									<li><span class="key-mechanism">Mechanism:</span> How did the paper's authors do it or find out?</li>
+									<li><span class="key-finding">Findings:</span> Did it work? What did the paper's authors find out?</li>
+								</ol>
+								<button class="to-first-example btn btn-lg btn-success">Continue</button>
+							</div>
+						</div>	<!-- End instructions container -->
+						<hr/>
+						<div class="row" id="example-1" style="display:none;">
+							<div class="col-md-12 col-xs-12">
+								<h3>Let's learn by doing! (Part 1)</h3>
+								<p>Let's look at what these highlights mean in some examples. Select a highlight button to activate a highlight state. Then select parts of the text in the abstract below to apply the highlight state.</p>
+								<div class="row tutorial-example">
+									<div class="col-md-12 col-xs-12">
+										<label>Highlight buttons:</label>
+										<br/>
+										<div class="btn-group" role="group" aria-label="...">
+							        <button type="button" class="btn btn-default background init-highlight">Highlight{{statusBackground}} background/implications</button>
+							        <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
+							        <button type="button" class="btn btn-default mechanism init-highlight">Highlight{{statusMechanism}} mechanism</button>
+							        <button type="button" class="btn btn-default finding init-highlight">Highlight{{statusFinding}} finding</button>
+							        <button type="button" class="btn btn-default unmark init-highlight">Unhighlight{{statusUnmark}}</button>
+							        <!-- <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button> -->
+							      </div>
+										<p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
+											<div class="col-md-5 col-xs-5 doc example">
+												<p class="trial-names-1" style="display:none;"><label>Your highlights</label></p>
+												{{#each testWords1}}
+													{{> tutorialWord}}
+												{{/each}}
+											</div>
+											<div class="col-md-5 col-xs-5 doc example gold-example" style="display:none;">
+												<p class="trial-names-2" style="display:none;"><label>Correct highlights</label></p>
+												{{#each goldWords1}}
+													{{> goldWord}}
+												{{/each}}
+											</div>
+										</div>
+										<!-- <hr/> -->
+										<!-- <p class="trial-result-filler"> </p> -->
+								</div>
+								<div class="row tutorial-finisher">
+									<div class="col-md-12 col-xs-12">
+										<p class="trial-result-1" style="display:none;">Your highlights are {{score1}} consistent with the correct highlights!</p>
+										<button class="test1 btn btn-lg btn-primary">Check your work</button> then
+										<button class="next-example btn btn-lg btn-success" disabled=true>Continue to next example</button>
 									</div>
 								</div>
-								<!-- <hr/> -->
-								<!-- <p class="trial-result-filler"> </p> -->
-						</div>
-						<div class="row tutorial-finisher">
-							<div class="col-md-12 col-xs-12">
-								<p class="trial-result" style="display:none;">Your highlights are {{score}} consistent with the correct highlights!</p>
-								<button class="test btn btn-lg btn-primary">Check your work</button> then
-								<button class="continue btn btn-lg btn-success" disabled=true>Continue to main task</button>
 							</div>
-						</div>
-        </div>
-    </div>
+						</div> <!-- End example 1 container -->
+						<hr/>
+						<div class="row" id="example-2" style="display:none;">
+							<div class="col-md-12 col-xs-12">
+								<h3>Let's learn by doing! (Part 2)</h3>
+								<p>Let's practice with another example. As before, select a highlight button to activate a highlight state. Then select parts of the text in the abstract below to apply the highlight state.</p>
+								<div class="row tutorial-example">
+									<div class="col-md-12 col-xs-12">
+										<label>Highlight buttons:</label>
+										<br/>
+										<div class="btn-group" role="group" aria-label="...">
+							        <button type="button" class="btn btn-default background init-highlight">Highlight{{statusBackground}} background/implications</button>
+							        <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
+							        <button type="button" class="btn btn-default mechanism init-highlight">Highlight{{statusMechanism}} mechanism</button>
+							        <button type="button" class="btn btn-default finding init-highlight">Highlight{{statusFinding}} finding</button>
+							        <button type="button" class="btn btn-default unmark init-highlight">Unhighlight{{statusUnmark}}</button>
+							        <!-- <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button> -->
+							      </div>
+										<p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
+											<div class="col-md-5 col-xs-5 doc example">
+												<p class="trial-names-2" style="display:none;"><label>Your highlights</label></p>
+												{{#each testWords2}}
+													{{> tutorialWord}}
+												{{/each}}
+											</div>
+											<div class="col-md-5 col-xs-5 doc example gold-example" style="display:none;">
+												<p class="trial-names-2" style="display:none;"><label>Correct highlights</label></p>
+												{{#each goldWords2}}
+													{{> goldWord}}
+												{{/each}}
+											</div>
+										</div>
+										<!-- <hr/> -->
+										<!-- <p class="trial-result-filler"> </p> -->
+								</div>
+								<div class="row tutorial-finisher">
+									<div class="col-md-12 col-xs-12">
+										<p class="trial-result-2" style="display:none;">Your highlights are {{score2}} consistent with the correct highlights!</p>
+										<button class="test2 btn btn-lg btn-primary">Check your work</button> then
+										<button class="continue btn btn-lg btn-success" disabled=true>Continue to main task!</button>
+									</div>
+								</div>
+							</div>
+						</div> <!-- End example 2 container -->
+        </div> <!-- End container column -->
+			</div> <!-- End container row -->
+  </div>
 </template>
 
 <template name="tutorialWord">
@@ -233,3 +256,34 @@
 
 	</div>
 	-->
+
+	<!-- <p>Here are examples of each highlight type in the context of two different abstracts:</p>
+	<div class="row tutorial-example">
+		<div class="col-md-5 col-xs-5 doc example">
+			<p><label class="trial-names">Example 1</label></p>
+			<span class="key-background">The management of group context in socially mediating technologies is an important challenge for the design community</span>. <span class="key-purpose">To better understand how users manage group context, </span><span class="key-mechanism">we explored the practice of multiple profile management in social media.</span> <span class="key-finding">In doing so, we observed creative and opportunistic strategies for group context management. We found that multiple profile maintenance is motivated by four factors: privacy, identity, utility, and propriety. Drawing on these motives, we observe a continuum of boundary regulation behaviors: pseudonymity, practical obscurity, and transparent separation.</span> <span class="key-background">Based on these findings, we encourage designers of group context management systems to more broadly consider motives and practices of group separations in social media. Group context management systems should be privacy-enhancing, but a singular focus on privacy overlooks a range of other group context management practices.</span>
+		</div>
+		<div class="col-md-5 col-xs-5 doc example">
+			<p><label class="trial-names">Example 2</label></p>
+			<span class="key-purpose">In this paper we explore the challenges in crowdsourcing the task of translation over the web in which remotely located translators work on providing translations independent of each other.</span> <span class="key-mechanism">We then propose a collaborative workflow for crowdsourcing translation to address some of these challenges. In our pipeline model, the translators are working in phases where output from earlier phases can be enhanced in the subsequent phases. </span> <span class="key-background">We also highlight some of the novel contributions of the pipeline model like assistive translation and translation synthesis that can leverage monolingual and bilingual speakers alike. </span> <span class="key-finding">We evaluate our approach by eliciting translations for both a minority-to-majority language pair and a minority-to-minority language pair. We observe that in both scenarios, our workflow produces better quality translations in a cost-effective manner, when compared to the traditional crowdsourcing workflow.</span>
+		</div>
+	</div>
+
+	<p>As you can see, you don't have to understand exactly what the authors are saying; you can often tell just based on writing/word-level cues when authors are saying a particular kind of thing:</p>
+	<ul>
+		<li><strong>Example 1</strong> demonstrates one common pattern:
+			<ol>
+				<li>state the <span class="key-background">background</span> for the paper in the beginning, quickly move to</li>
+				<li>describe the specific <span class="key-purpose">purpose</span> of the paper, then go on to</li>
+				<li>discuss the <span class="key-mechanism">mechanisms</span> and <span class="key-finding">findings</span> of the work, and </li>
+				<li>zoom back up to <span class="key-background">how their work is important for questions/goals XYZ</span>)</li>
+			</ol>
+		</li>
+		<li><strong>Example 2</strong> illustrates another possible pattern:
+			<ol>
+				<li>immediately state the specific <span class="key-purpose">purpose</span> of the paper and <span class="key-mechanism">the approach introduced by the paper that achieves that purpose</span>, followed by </li>
+				<li><span class="key-background">a statement of how others could benefit from ths work</span>, and then </li>
+				<li>describing <span class="key-finding">how they know the approach works</span></li>
+			</ol>
+		</li>
+	</ul> -->
