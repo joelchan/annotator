@@ -106,7 +106,7 @@ Template.tutorial.events({
     },
     'click .test1' : function() {
       var user = Session.get("currentUser");
-      var score = scoreTutorial();
+      var score = scoreTutorial("ex1");
       var highlights = LocalWords.find({docID: "ex1"}).fetch();
       EventLogger.logCheckTutorialAccuracy(user, score, highlights)
       var dataStatus = checkData("ex1");
@@ -136,7 +136,7 @@ Template.tutorial.events({
     },
     'click .test2' : function() {
       var user = Session.get("currentUser");
-      var score = scoreTutorial();
+      var score = scoreTutorial("ex2");
       var highlights = LocalWords.find({docID: "ex2"}).fetch();
       EventLogger.logCheckTutorialAccuracy(user, score, highlights)
       var dataStatus = checkData("ex2");
@@ -289,15 +289,21 @@ Template.tutorialWord.events({
 })
 
 var scoreTutorial = function(docID) {
-  var highlightedWords = LocalWords.find({docID: docID}).fetch();
+  var highlightedWords = LocalWords.find({docID: docID}, {sort: { globalPsn : 1 }}).fetch();
+  logger.trace("Highlighted words: " + JSON.stringify(highlightedWords));
+  var goldWords = goldTutorialWords[docID]
+  logger.trace("Checking against goldwords: " + JSON.stringify(goldWords));
+  goldWords.sort(function(a, b) {return a.globalPsn - b.globalPsn});
   var numCorrect = 0;
   for (i=0; i < highlightedWords.length; i++) {
-    if (highlightType(highlightedWords[i]) === highlightType(goldTutorialWords[docID][i])) {
+    if (highlightType(highlightedWords[i]) === highlightType(goldWords[i])) {
       numCorrect += 1;
     }
   }
   var score = numCorrect/highlightedWords.length*100;
-  return score.toString().substring(0,4) + "%";
+  var scoreStr = score.toString().substring(0,4) + "%"
+  logger.trace("tutorial score for " + docID + ": " + scoreStr);
+  return scoreStr;
 }
 
 var highlightType = function(word) {
