@@ -134,7 +134,7 @@ Template.annotateTask.events({
     },
     'click .finished': function() {
         // grab and check summary data
-        var dataStatus = checkData();
+        var dataStatus = checkData(Session.get("currentDoc")._id);
         if (dataStatus === "allGood") {
           finishTask()
         } else {
