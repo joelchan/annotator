@@ -49,11 +49,15 @@
         <br/>
         <div class="btn-group" role="group" aria-label="...">
           <button type="button" class="btn btn-default background init-highlight">Highlight{{statusBackground}} background/implications</button>
-          <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
+          <!-- <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button> -->
           <button type="button" class="btn btn-default mechanism init-highlight">Highlight{{statusMechanism}} mechanism</button>
           <button type="button" class="btn btn-default finding init-highlight">Highlight{{statusFinding}} finding</button>
           <button type="button" class="btn btn-default unmark init-highlight">Unhighlight{{statusUnmark}}</button>
           <!-- <button type="button" class="btn btn-default none init-highlight">Stop highlighting</button> -->
+        </div>
+        <br/>
+        <div id="purpose-highlight-container" class="btn-group" role="group" aria-label="..." style="display:none;">
+          <button type="button" class="btn btn-default purpose init-highlight">Highlight{{statusPurpose}} purpose</button>
         </div>
         <p><span class="highlight-description" style="display:none;">{{highlightDescription}}</span></p>
     <!-- <div class="divider">
@@ -82,7 +86,8 @@
             <div class="controls">
                 <!-- take the user to confirmation page -->
                 <!-- <button class="finished btn btn-success">I'm finished!</button> -->
-                <button type="button" class="finished btn btn-success btn-lg " id="load" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Submission">I'm finished!</button>
+                <span id="init-purpose-container"><button type="button" id="init-purpose" class="btn btn-lg btn-primary">Start highlighting purpose</button> then </span>
+                <button type="button" class="finished btn btn-success btn-lg " id="load" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing Submission" disabled>Submit highlights</button>
                 <!-- take the user to confirmation page -->
                 <!-- <button class="another btn btn-default">Get me another!</button> -->
             </div>

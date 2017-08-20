@@ -71,10 +71,12 @@ Template.tutorial.helpers({
     }
   },
   score1: function() {
-    return scoreTutorial("ex1");
+    // return scoreTutorial("ex1");
+    return Session.get("score1");
   },
   score2: function() {
-    return scoreTutorial("ex2")
+    return Session.get("score2");
+    // return scoreTutorial("ex2")
   }
 })
 
@@ -117,6 +119,7 @@ Template.tutorial.events({
         $('.trial-names-1').show();
         $('.next-example').prop('disabled', false);
         UserManager.recordTutorialAccuracy(user, score, highlights, "ex1")
+        Session.set("score1", score);
       } else {
         alert(checkWarnings[dataStatus])
       }
@@ -146,7 +149,8 @@ Template.tutorial.events({
         $('#trial-result-2').show();
         $('.trial-names-2').show();
         $('.continue').prop('disabled', false);
-        UserManager.recordTutorialAccuracy(user, score, highlights, "ex2")
+        UserManager.recordTutorialAccuracy(user, score, highlights, "ex2");
+        Session.set("score2", score);
       } else {
         alert(checkWarnings[dataStatus])
       }
@@ -156,6 +160,9 @@ Template.tutorial.events({
     },
     'click .next-example': function() {
       $('#example-2').show();
+      $('html, body').animate({
+        scrollTop: $("#example-2").offset().top
+      }, 1250);
     },
     'click .continue' : function() {
         logger.debug("User clicked continue");
@@ -171,6 +178,18 @@ Template.tutorial.events({
             alert("You need to have entered your MTurkID to continue");
             Router.go("Land")
         }
+    },
+    'click #init-purpose': function(event) {
+      var user = Session.get("currentUser");
+      if (mostlyAnnotatedBy(user, "ex2", .66)) {
+        $('#init-purpose-container').hide();
+        $('#purpose-highlight-container').show();
+        $('.test2').prop("disabled", false);
+        $('.purpose').click();
+      } else {
+        alert("Please highlight most of the document first before highlighting the purpose elements!")
+      }
+
     },
     'click .init-highlight': function(event) {
       var button = event.currentTarget;
@@ -266,7 +285,7 @@ Template.tutorialWord.events({
       logger.debug("Hovering over token");
       if (Session.get("isHighlighting")) {
         var word = event.currentTarget;
-        logger.trace(word.innerHTML);
+        // logger.trace(word.innerHTML);
         var wordID = trimFromString(word.id, "word-");
         // currentEnd.s = Sentences.findOne(Words.findOne(wordID).sentenceID).psn;
         // currentEnd.w = Words.findOne(wordID).sequence;

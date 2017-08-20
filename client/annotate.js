@@ -132,6 +132,19 @@ Template.annotateTask.events({
         Session.set("isHighlighting", false);
       }
     },
+    'click #init-purpose': function(event) {
+      var user = Session.get("currentUser");
+      var doc = Session.get("currentDoc");
+      if (mostlyAnnotatedBy(user, doc._id, .66)) {
+        $('#init-purpose-container').hide();
+        $('#purpose-highlight-container').show();
+        $('.finished').prop("disabled", false);
+        $('.purpose').click();
+      } else {
+        alert("Please highlight most of the document first before highlighting the purpose elements!")
+      }
+
+    },
     'click .finished': function() {
         // grab and check summary data
         var dataStatus = checkData(Session.get("currentDoc")._id);
