@@ -113,7 +113,7 @@ Template.tutorial.events({
       if (dataStatus === "allGood") {
         $('.gold-example-1').show();
         // $('trial-result-filler').hide();
-        $('.trial-result-1').show();
+        $('#trial-result-1').show();
         $('.trial-names-1').show();
         $('.next-example').prop('disabled', false);
         UserManager.recordTutorialAccuracy(user, score, highlights, "ex1")
@@ -143,7 +143,7 @@ Template.tutorial.events({
       if (dataStatus === "allGood") {
         $('.gold-example-2').show();
         // $('trial-result-filler').hide();
-        $('.trial-result-2').show();
+        $('#trial-result-2').show();
         $('.trial-names-2').show();
         $('.continue').prop('disabled', false);
         UserManager.recordTutorialAccuracy(user, score, highlights, "ex2")
@@ -290,9 +290,9 @@ Template.tutorialWord.events({
 
 var scoreTutorial = function(docID) {
   var highlightedWords = LocalWords.find({docID: docID}, {sort: { globalPsn : 1 }}).fetch();
-  logger.trace("Highlighted words: " + JSON.stringify(highlightedWords));
+  // logger.trace("Highlighted words: " + JSON.stringify(highlightedWords));
   var goldWords = goldTutorialWords[docID]
-  logger.trace("Checking against goldwords: " + JSON.stringify(goldWords));
+  // logger.trace("Checking against goldwords: " + JSON.stringify(goldWords));
   goldWords.sort(function(a, b) {return a.globalPsn - b.globalPsn});
   var numCorrect = 0;
   for (i=0; i < highlightedWords.length; i++) {
@@ -327,7 +327,7 @@ var highlightType = function(word) {
 }
 
 highlightDescriptions = {
-  "purpose": "What do the paper's authors want to do or know?",
+  "purpose": "What is the specific thing that the paper's authors want to do or know?",
   "mechanism": "How did the paper's authors do it or find out?",
   "finding": "Did it work? What did the paper's authors find out?",
   "background": "What is the intellectual context of this work? What other (higher-level) goals/questions can be furthered by this work? How might this help other research(ers)?",

@@ -5,21 +5,26 @@
 						<div class="row" id="instructions">
 							<div class="col-md-12 col-xs-12">
 								<h3>Instructions</h3>
-		            <p>We'd like you to read a research paper abstract and highlight the parts that describe the paper's:</p>
-								<ol>
-									<li><span class="key-background">Background/implications:</span> What is the intellectual context of this work? What other (higher-level) goals/questions can be furthered by this work? How might this help other research(ers)?</li>
-									<li><span class="key-purpose">Purpose:</span> What do the paper's authors want to do or know?</li>
-									<li><span class="key-mechanism">Mechanism:</span> How did the paper's authors do it or find out?</li>
-									<li><span class="key-finding">Findings:</span> Did it work? What did the paper's authors find out?</li>
-								</ol>
+		            <p>We'd like you to read a research paper abstract and highlight the parts that describe:</p>
+								<ul>
+									<li><strong>Why</strong> the authors of the paper did what they did, which consists of:
+										<ul>
+											<li>The "big why", or <span class="key-background">Background/implications</span> of the research: What is the intellectual context of this work? What other (higher-level) goals/questions can be furthered by this work? How might this help other research(ers)?</li>
+											<li>The "small why", or the specific <span class="key-purpose">Purpose</span> of the paper: What is the <strong>specific</strong> thing that the paper's authors want to do or know?</li>
+										</ul>
+									</li>
+									<li><strong>What</strong> the research produced, aka the <span class="key-finding">Findings</span> of the paper: Did they achieve their goal? What did the paper's authors find out?</li>
+									<li><strong>How</strong> they accomplished their results, aka the <span class="key-mechanism">Mechanism</span> of the research: How did the paper's authors do it or find out?</li>
+								</ul>
 								<button class="to-first-example btn btn-lg btn-success">Continue</button>
 							</div>
 						</div>	<!-- End instructions container -->
 						<div class="row" id="example-1" style="display:none;">
+						<!-- <div class="row" id="example-1"> -->
 							<div class="col-md-12 col-xs-12">
 								<hr/>
 								<h3>Let's learn by doing! (Part 1)</h3>
-								<p>Let's look at what these highlights mean in some examples. Select a highlight button to activate a highlight state. Then select parts of the text in the abstract below to apply the highlight state.</p>
+								<p>Let's look at what these highlights mean in some examples. Give it a shot first, and you'll have a chance to see a "correct" version to compare and learn. Select a highlight button to activate a highlight state. Then select parts of the text in the abstract below to apply the highlight state.</p>
 								<div class="row tutorial-example">
 									<div class="col-md-12 col-xs-12">
 										<label>Highlight buttons:</label>
@@ -51,7 +56,20 @@
 								</div>
 								<div class="row tutorial-finisher">
 									<div class="col-md-12 col-xs-12">
-										<p class="trial-result-1" style="display:none;">Your highlights are {{score1}} consistent with the correct highlights!</p>
+										<div id="trial-result-1" style="display:none;">
+										<!-- <div id="trial-result-1"> -->
+											<p class="trial-result">Your highlights are {{score1}} consistent with the correct highlights!</p>
+											<h3>Some tips:</h3>
+											<ul>
+												<li>Heuristics:</li>
+												<ul>
+													<li>Note in the example how <strong><u>keywords can signal when the paper is talking about the why/what/how</u></strong>. For example, <span class="key-finding">findings</span> are often signaled with phrases like "we demonstrate..." or "we find that...".</li>
+													<li>You might also <strong><u>use the position of phrases/sentences in the abstract as a heuristic</u></strong>. For example, as in this case, it's common for the "why" of the paper (including the <span class="key-background">background</span> and <span class="key-purpose">purpose</span>) of the work to be described in the beginning, followed by the <span class="key-mechanism">mechanism</span> and <span class="key-finding">findings</span> of the work.</li>
+													<li>Note that these are just heuristics that we've found helpful. If you come across any new ones, we'd love to hear them!</li>
+											</ul>
+											<li>You may also have noticed that it can be tricky to distinguish the <span class="key-background">background</span> (aka the "big why") from the <span class="key-purpose">purpose</span> (aka the "small why") of the work. We've found that it's helpful to <strong><u>first highlight all the "whys" of the work as <span class="key-background">background</span> (along with the <span class="key-mechanism">mechanism</span> and <span class="key-finding">findings</span>), and then return to highlight the specific "small why", or <span class="purpose">purpose</span> of the work.</u></strong></li>
+										</ul>
+										</div>
 										<button class="test1 btn btn-lg btn-primary">Check your work</button> then
 										<button class="next-example btn btn-lg btn-success" disabled=true>Continue to next example</button>
 									</div>
@@ -59,6 +77,7 @@
 							</div>
 						</div> <!-- End example 1 container -->
 						<div class="row" id="example-2" style="display:none;">
+						<!-- <div class="row" id="example-2"> -->
 							<div class="col-md-12 col-xs-12">
 								<hr/>
 								<h3>Let's learn by doing! (Part 2)</h3>
@@ -94,7 +113,16 @@
 								</div>
 								<div class="row tutorial-finisher">
 									<div class="col-md-12 col-xs-12">
-										<p class="trial-result-2" style="display:none;">Your highlights are {{score2}} consistent with the correct highlights!</p>
+										<div id="trial-result-2" style="display:none;">
+										<!-- <div id="trial-result-2"> -->
+											<p class="trial-result">Your highlights are {{score2}} consistent with the correct highlights!</p>
+											<h3>More tips:</h3>
+											<ul>
+												<li>Note again in the example how <strong><u>keywords can signal when the paper is talking about the why/what/how</u></strong>. For example, a paper's <span class="key-purpose">purpose</span> might often be "to better understand...". The <span class="key-background">implications</span> of the work can also be signaled by phrases like "based on these findings..."</li>
+												<li>Note again also how <strong><u>the position of phrases/sentences in the abstract was an informative signal</u></strong>. Again, the "why" of the paper (including the <span class="key-background">background</span> and <span class="key-purpose">purpose</span>) came first, followed by the <span class="key-mechanism">mechanism</span> and <span class="key-finding">findings</span> of the work. In this case (as in others), the paper also circled back to the <span class="key-background">implications</span> of the work.</li>
+											</ul>
+											<p>Note again that these are just heuristics! Please use your judgment and combination of word and sentence-level cues to mark the words.</p>
+										</div>
 										<button class="test2 btn btn-lg btn-primary">Check your work</button> then
 										<button class="continue btn btn-lg btn-success" disabled=true>Continue to main task!</button>
 									</div>
@@ -256,5 +284,3 @@
 
 	</div>
 	-->
-
-	
