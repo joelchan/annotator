@@ -52,6 +52,6 @@ if (Documents.find().count() == 0) {
   logger.debug("Successfully inserted " + Documents.find().count() + " documents!");
 
   // index for hopefully faster performance!
-  Sentences._ensureIndex({docID: 1});
-  Words._ensureIndex({sentenceID: 1});
+  // Sentences._ensureIndex({docID: 1});
+  // Words._ensureIndex({sentenceID: 1});
 }
