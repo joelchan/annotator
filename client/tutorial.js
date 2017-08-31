@@ -100,7 +100,8 @@ Template.tutorial.events({
       var score = scoreTutorial();
       var highlights = LocalWords.find().fetch();
       EventLogger.logCheckTutorialAccuracy(user, score, highlights)
-      var dataStatus = checkData();
+      // var dataStatus = checkData();
+      var dataStatus = "allGood";
       if (dataStatus === "allGood") {
         $('.gold-example').toggle();
         // $('trial-result-filler').hide();
