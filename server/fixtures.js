@@ -49,6 +49,7 @@ if (Documents.find().count() == 0) {
       DocumentManager.createDocument(doc);
     // }
   });
+  logger.debug("Successfully inserted " + Documents.find().count() + " documents!");
 
   // index for hopefully faster performance!
   Sentences._ensureIndex({docID: 1});
